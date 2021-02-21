@@ -34,9 +34,7 @@ namespace DapperRepo.Repo
             var sql = $"insert into {typeof(T).Name} ( {string.Join(",", properties)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
             return action.Invoke(new SqlConnection(ConnectionString), sql);
         }
-
- 
-
+        
         protected Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
         {
             var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo(element);
@@ -54,6 +52,5 @@ namespace DapperRepo.Repo
             var delete = $"delete from {typeof(T).Name} where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
             return func.Invoke(new SqlConnection(ConnectionString), delete);
         }
-        
     }
 }
