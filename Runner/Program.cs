@@ -8,6 +8,13 @@ namespace Runner
 {
     class Program
     {
+        static async Task Main(string[] args)
+        {
+            const string connection = "Server=localhost;Database=test;Trusted_Connection=True";
+            SyncVersion(connection);
+            await AsyncVersion(connection);
+        }
+        
         private static void SyncVersion(string connection)
         {
             var repo = new SqlRepo(connection);
@@ -42,12 +49,7 @@ namespace Runner
             await asyncRepo.Delete(items.LastOrDefault());
         }
 
-        static async Task Main(string[] args)
-        {
-            const string connection = "Server=localhost;Database=test;Trusted_Connection=True";
-            SyncVersion(connection);
-            await AsyncVersion(connection);
-        }
+
     }
     public class TestTable
     {
