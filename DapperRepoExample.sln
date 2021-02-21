@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{C49BAC28-84F7-4D41-BF8A-44EBE9CCDB25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperRepo", "DapperRepo\DapperRepo.csproj", "{687AF38D-51FA-47C3-A56A-9733A70860F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C49BAC28-84F7-4D41-BF8A-44EBE9CCDB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49BAC28-84F7-4D41-BF8A-44EBE9CCDB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49BAC28-84F7-4D41-BF8A-44EBE9CCDB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49BAC28-84F7-4D41-BF8A-44EBE9CCDB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
