@@ -54,6 +54,11 @@ namespace DapperRepoTests.Utils
                 var item = Activator.CreateInstance<T>();
                 for (int i = 0; i < dataRecord.FieldCount; i++)
                 {
+                    if (dataRecord[i] is DBNull)
+                    {
+                        continue;
+                    }
+
                     System.Reflection.PropertyInfo propertyInfo = item.GetType().GetProperty(dataRecord.GetName(i));
                     propertyInfo.SetValue(item, Convert.ChangeType(dataRecord[i], propertyInfo.PropertyType), null);
                 }
