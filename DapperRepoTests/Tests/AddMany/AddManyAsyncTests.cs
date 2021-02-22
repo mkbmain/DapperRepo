@@ -2,28 +2,19 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.AddMany
 {
-    public class AddManyAsyncTests : BaseTestClassAsync
+    public class AddManyTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
     {
-        private static string dbName = $"AddManyAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public AddManyTestClassAsyncDbAsyncTests() : base($"AddManyAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
-        }
-
+        
+        
         [Test]
         public async Task Ensure_we_can_add_multiple_records()
         {
@@ -33,7 +24,7 @@ namespace DapperRepoTests.Tests.AddMany
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
 
-            await SUT.AddMany(testTableItems);
+            await Sut.AddMany(testTableItems);
 
             var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
             var items = result as TestTable[] ?? result.ToArray();

@@ -2,33 +2,23 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Add
 {
-    public class AddAsyncTests : BaseTestClassAsync
+    public class AddTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
     {
-        private static string dbName = $"AddAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public AddTestClassAsyncDbAsyncTests() : base($"AddAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
-        }
-
+        
         [Test]
         public async Task Ensure_we_can_add()
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
-            await SUT.Add(testTableItem);
+            await Sut.Add(testTableItem);
 
             var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
             var items = result as TestTable[] ?? result.ToArray();

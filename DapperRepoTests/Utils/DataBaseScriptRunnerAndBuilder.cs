@@ -12,12 +12,9 @@ namespace DapperRepoTests.Utils
     {
         public static void InsertTestTables(string connection, IEnumerable<TestTable> testTables)
         {
-            ExecuteCommandNonQuery(connection, InsertSqlBuildForTestTable(testTables));
-        }
-
-        public static string InsertSqlBuildForTestTable(IEnumerable<TestTable> testTableItems)
-        {
-            return $"Insert into TestTable (id,name,SomeNumber) values{string.Join(",", testTableItems.Select(f => $"('{f.Id}','{f.Name}',{f.SomeNumber})"))}";
+            var sql =
+                $"Insert into TestTable (id,name,SomeNumber) values{string.Join(",", testTables.Select(f => $"('{f.Id}','{f.Name}',{f.SomeNumber})"))}";
+            ExecuteCommandNonQuery(connection, sql);
         }
 
         public static void RunDb(string connectionToMaster, string dbName, string scriptLocation)
@@ -32,8 +29,15 @@ namespace DapperRepoTests.Utils
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
-            ExecuteCommandNonQuery(connectionToMaster,
-                $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE{Environment.NewLine}DROP DATABASE {dbName}");
+            ExecuteCommandNonQuery(connectionToMaster, $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE{Environment.NewLine}DROP DATABASE {dbName}");
+        }
+        
+        private static void ExecuteCommandNonQuery(string connection, string sql)
+        {
+            using var conn = new SqlConnection(connection);
+            conn.Open();
+            var sqlCommand = new SqlCommand(sql, conn);
+            sqlCommand.ExecuteNonQuery();
         }
 
         public static IEnumerable<T> GetAll<T>(string connection) where T : class, new()
@@ -68,13 +72,6 @@ namespace DapperRepoTests.Utils
 
             return items;
         }
-
-        public static void ExecuteCommandNonQuery(string connection, string sql)
-        {
-            using var conn = new SqlConnection(connection);
-            conn.Open();
-            var sqlCommand = new SqlCommand(sql, conn);
-            sqlCommand.ExecuteNonQuery();
-        }
+        
     }
 }

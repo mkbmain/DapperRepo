@@ -2,26 +2,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.GetById
 {
-    public class GetByIdAsyncTest : BaseTestClassAsync
+    public class GetByIdTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
     {
-        private static string dbName = $"GetByIdAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public GetByIdTestClassAsyncDbAsyncTest() : base( $"GetByIdAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
         }
 
         [Test]
@@ -35,7 +25,7 @@ namespace DapperRepoTests.Tests.GetById
             
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
 
-            var item = await SUT.GetById(new TestTable{Id = testTableItems.First().Id});
+            var item = await Sut.GetById(new TestTable{Id = testTableItems.First().Id});
             Assert.IsNotNull(item);
             Assert.AreEqual(testTableItems.First().Id, item.Id);
             Assert.AreEqual(testTableItems.First().SomeNumber, item.SomeNumber);
@@ -53,7 +43,7 @@ namespace DapperRepoTests.Tests.GetById
 
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
 
-            var item = await SUT.GetById(new TestTable{Id =Guid.NewGuid()});
+            var item = await Sut.GetById(new TestTable{Id =Guid.NewGuid()});
             Assert.IsNull(item);
         }
     }

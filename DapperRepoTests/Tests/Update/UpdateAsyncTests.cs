@@ -2,26 +2,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Update
 {
-    public class UpdateAsyncTest : BaseTestClassAsync
+    public class UpdateTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
     {
-        private static string dbName = $"UpdateAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public UpdateTestClassAsyncDbAsyncTest() : base( $"UpdateAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
         }
 
         [Test]
@@ -32,7 +22,7 @@ namespace DapperRepoTests.Tests.Update
             
             testTableItem.Name = "SomeOtherNAme";
             testTableItem.SomeNumber = 532;
-            await SUT.Update(testTableItem);
+            await Sut.Update(testTableItem);
 
             var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
                 
@@ -51,7 +41,7 @@ namespace DapperRepoTests.Tests.Update
             
             testTableItem.Name = "SomeOtherNAme";
             testTableItem.SomeNumber = 532;
-            await SUT.Update(testTableItem);
+            await Sut.Update(testTableItem);
 
             var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
                 
@@ -73,7 +63,7 @@ namespace DapperRepoTests.Tests.Update
             
             testTableItem.Name =null;
             testTableItem.SomeNumber = 532;
-            await SUT.Update(testTableItem, true);
+            await Sut.Update(testTableItem, true);
 
             var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
                 
@@ -91,7 +81,7 @@ namespace DapperRepoTests.Tests.Update
             
             testTableItem.Name =null;
             testTableItem.SomeNumber = 532;
-            await SUT.Update(testTableItem);
+            await Sut.Update(testTableItem);
 
             var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
                 

@@ -2,26 +2,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Delete
 {
-    public class DeleteAsyncTest : BaseTestClassAsync
+    public class DeleteTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
     {
-        private static string dbName = $"DeleteAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public DeleteTestClassAsyncDbAsyncTest() : base($"DeleteAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
         }
 
         [Test]
@@ -30,7 +20,7 @@ namespace DapperRepoTests.Tests.Delete
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
             var dontTouch = new TestTable {Id = Guid.NewGuid(), Name = "gwgw", SomeNumber = 12};
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new[] {testTableItem, dontTouch});
-            await SUT.Delete(testTableItem);
+            await Sut.Delete(testTableItem);
 
             var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
 

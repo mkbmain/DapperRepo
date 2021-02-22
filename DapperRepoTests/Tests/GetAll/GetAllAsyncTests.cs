@@ -2,28 +2,18 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
+using DapperRepoTests.Tests.BaseTestClasses;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.GetAll
 {
-    public class GetAllAsyncTests : BaseTestClassAsync
+    public class GetAllTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
     {
-        private static string dbName = $"GetAllAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
-        protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
-
-        [SetUp]
-        public void Setup()
+        public GetAllTestClassAsyncDbAsyncTests() : base( $"GetAllAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, dbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, dbName);
-        }
-
+        
         [Test]
         public async Task Ensure_we_get_all_records_back()
         {
@@ -35,7 +25,7 @@ namespace DapperRepoTests.Tests.GetAll
             
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
             
-            var items = (await SUT.GetAll<TestTable>()).ToArray();
+            var items = (await Sut.GetAll<TestTable>()).ToArray();
 
             Assert.AreEqual(testTableItems.Length, items.Length);
             foreach (var item in testTableItems)
@@ -51,7 +41,7 @@ namespace DapperRepoTests.Tests.GetAll
         [Test]
         public async Task Ensure_if_we_have_no_records_we_do_not_blow_up()
         {
-            var items = (await SUT.GetAll<TestTable>()).ToArray();
+            var items = (await Sut.GetAll<TestTable>()).ToArray();
             Assert.AreEqual(0, items.Length);
         }
     }
