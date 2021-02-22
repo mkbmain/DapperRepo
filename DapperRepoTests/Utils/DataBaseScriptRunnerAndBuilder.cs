@@ -41,9 +41,9 @@ namespace DapperRepoTests.Utils
             using var conn = new SqlConnection(connection);
             conn.Open();
             var sqlCommand = new SqlCommand($"select * from {typeof(T).Name}", conn);
-            var b = sqlCommand.ExecuteReader();
+            var sqlDataReader = sqlCommand.ExecuteReader();
             var items = new List<T>();
-            foreach (var record in b)
+            foreach (var record in sqlDataReader)
             {
                 var dataRecord = record as DbDataRecord;
                 if (dataRecord == null)
