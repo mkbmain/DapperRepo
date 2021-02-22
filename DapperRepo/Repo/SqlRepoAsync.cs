@@ -37,7 +37,7 @@ namespace DapperRepo.Repo
 
         public Task Delete<T>(T element)
         {
-            return BaseDelete(element, (connection, s) => connection.ExecuteAsync(s, new[] {element}));
+            return BaseDelete<T>((connection, s) => connection.ExecuteAsync(s, new[] {element}));
         }
     }
 }

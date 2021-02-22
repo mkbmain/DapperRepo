@@ -45,7 +45,7 @@ namespace DapperRepo.Repo
 
         public void Delete<T>(T element)
         {
-            BaseDelete(element, (connection, s) =>
+            BaseDelete<T>((connection, s) =>
             {
                 connection.Execute(s, new[] {element});
                 return Task.CompletedTask;

@@ -48,10 +48,9 @@ namespace DapperRepo.Repo
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
-        internal Task BaseDelete<T>(T element, Func<SqlConnection, string, Task> func)
+        internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
         {
-            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
-            var delete = $"delete from {typeof(T).Name} where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+            var delete = $"delete from {typeof(T).Name} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
         }
     }
