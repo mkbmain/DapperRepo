@@ -1,11 +1,12 @@
 # DapperRepo
 Special Thanks to armanx
 
-Simple dapper repo with asyc implementation aswell no interface base to build on all work to create the table for Runner 
+Simple dapper repo with async implementation aswell no interface base to build on all work to create the table for Runner 
 
 
 # Sql
-connection strin is located in Program.cs in main as a const 
+connection string is located in Program.cs in main as a const 
+Also for tests is located in test project on Connection.cs
 ``` c#  
   const string connection = "Server=localhost;Database=test;Trusted_Connection=True";
  ```
@@ -27,5 +28,11 @@ GO
 ```
 
 
-## creating new entitys
-please note if you make your own the primary key attritube found in DapperRepo.PrimaryKeyAttribute.cs
+## creating new entities
+please note if you make your own the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
+
+
+## Tests
+Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
+
+also please note there are separate getall and insert methods that are raw in  DataBaseScriptRunnerAndBuilder.cs
