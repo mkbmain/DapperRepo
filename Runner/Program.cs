@@ -6,6 +6,7 @@ using DapperRepo.Repo;
 
 namespace Runner
 {
+    // this is just a example of usage not tests
     class Program
     {
         static async Task Main(string[] args)
