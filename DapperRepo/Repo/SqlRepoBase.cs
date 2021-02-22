@@ -18,11 +18,9 @@ namespace DapperRepo.Repo
             _connectionString = connectionString;
         }
 
-
         internal Task<T> BaseGet<T>(Func<SqlConnection, string, Task<T>> func)
         {
-            var props = ReflectionUtils.GetBaseEntityProperyInfo<T>();
-            var sqlQuery = $"select * from {typeof(T).Name} {WhereClause(props)}";
+            var sqlQuery = $"select * from {typeof(T).Name} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), sqlQuery);
         }
 
