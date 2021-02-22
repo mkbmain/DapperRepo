@@ -32,7 +32,8 @@ namespace DapperRepo.Repo
 
         public Task Update<T>(T element, bool ignoreNullProperties = false)
         {
-            return BaseUpdate(element, ignoreNullProperties, (connection, s) => connection.ExecuteAsync(s, new[] {element}));
+            return BaseUpdate(element, ignoreNullProperties,
+                (connection, s) => connection.ExecuteAsync(s, new[] {element}));
         }
 
         public Task Delete<T>(T element)
