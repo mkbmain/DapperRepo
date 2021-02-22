@@ -5,11 +5,11 @@ using DapperRepoTests.Entities;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
-namespace DapperRepoTests.Tests
+namespace DapperRepoTests.Tests.GetAll
 {
-    public class AddManyAsyncTests : BaseTestClassAsync
+    public class GetAllAsyncTests : BaseTestClassAsync
     {
-        private static string dbName = $"AddManyAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
+        private static string dbName = $"GetAllAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
         protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
 
         [SetUp]
@@ -25,18 +25,17 @@ namespace DapperRepoTests.Tests
         }
 
         [Test]
-        public async Task Ensure_we_can_add_multiple_records()
+        public async Task Ensure_we_get_all_records_back()
         {
             var testTableItems = new[]
             {
                 new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33},
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
-
-            await SUT.AddMany(testTableItems);
-
-            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
-            var items = result as TestTable[] ?? result.ToArray();
+            
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            
+            var items = (await SUT.GetAll<TestTable>()).ToArray();
 
             Assert.AreEqual(testTableItems.Length, items.Length);
             foreach (var item in testTableItems)
@@ -47,6 +46,13 @@ namespace DapperRepoTests.Tests
                 Assert.AreEqual(item.Name, test.Name);
                 Assert.AreEqual(item.SomeNumber, test.SomeNumber);
             }
+        }
+        
+        [Test]
+        public async Task Ensure_if_we_have_no_records_we_do_not_blow_up()
+        {
+            var items = (await SUT.GetAll<TestTable>()).ToArray();
+            Assert.AreEqual(0, items.Length);
         }
     }
 }

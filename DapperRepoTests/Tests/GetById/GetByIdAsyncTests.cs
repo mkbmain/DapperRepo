@@ -5,11 +5,11 @@ using DapperRepoTests.Entities;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
-namespace DapperRepoTests.Tests
+namespace DapperRepoTests.Tests.GetById
 {
-    public class GetByIdTest : BaseTestClass
+    public class GetByIdAsyncTest : BaseTestClassAsync
     {
-        private static string dbName = $"GetByIdDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
+        private static string dbName = $"GetByIdAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
         protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
 
         [SetUp]
@@ -25,25 +25,7 @@ namespace DapperRepoTests.Tests
         }
 
         [Test]
-        public void Ensure_we_Can_Get_correct_record_Back()
-        {
-            var testTableItems = new[]
-            {
-                new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33},
-                new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
-            };
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
-
-
-            var item = SUT.GetById<TestTable>(testTableItems.First().Id);
-            Assert.IsNotNull(item);
-            Assert.AreEqual(testTableItems.First().Id, item.Id);
-            Assert.AreEqual(testTableItems.First().SomeNumber, item.SomeNumber);
-            Assert.AreEqual(testTableItems.First().Name, item.Name);
-        }
-        
-        [Test]
-        public void Ensure_if_no_record_found_we_return_null()
+        public async Task Ensure_we_Can_Get_correct_record_Back()
         {
             var testTableItems = new[]
             {
@@ -53,7 +35,25 @@ namespace DapperRepoTests.Tests
             
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
 
-            var item = SUT.GetById<TestTable>(Guid.NewGuid());
+            var item = await SUT.GetById<TestTable>(testTableItems.First().Id);
+            Assert.IsNotNull(item);
+            Assert.AreEqual(testTableItems.First().Id, item.Id);
+            Assert.AreEqual(testTableItems.First().SomeNumber, item.SomeNumber);
+            Assert.AreEqual(testTableItems.First().Name, item.Name);
+        }
+
+        [Test]
+        public async Task Ensure_if_no_record_found_we_return_null()
+        {
+            var testTableItems = new[]
+            {
+                new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33},
+                new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
+            };
+
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+
+            var item = await SUT.GetById<TestTable>(Guid.NewGuid());
             Assert.IsNull(item);
         }
     }

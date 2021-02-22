@@ -5,7 +5,7 @@ using DapperRepoTests.Entities;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
-namespace DapperRepoTests.Tests
+namespace DapperRepoTests.Tests.Add
 {
     public class AddAsyncTests : BaseTestClassAsync
     {

@@ -1,14 +1,15 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DapperRepoTests.Entities;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
-namespace DapperRepoTests.Tests
+namespace DapperRepoTests.Tests.AddMany
 {
-    public class AddManyTests : BaseTestClass
+    public class AddManyAsyncTests : BaseTestClassAsync
     {
-        private static string dbName = $"AddManyDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
+        private static string dbName = $"AddManyAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}";
         protected override string _connection => Connection.MasterConnectionString.Replace("master", dbName);
 
         [SetUp]
@@ -24,7 +25,7 @@ namespace DapperRepoTests.Tests
         }
 
         [Test]
-        public void Ensure_we_can_add_multiple_records()
+        public async Task Ensure_we_can_add_multiple_records()
         {
             var testTableItems = new[]
             {
@@ -32,9 +33,9 @@ namespace DapperRepoTests.Tests
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
 
-            SUT.AddMany(testTableItems);
+            await SUT.AddMany(testTableItems);
 
-            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);  
+            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
             var items = result as TestTable[] ?? result.ToArray();
 
             Assert.AreEqual(testTableItems.Length, items.Length);
