@@ -26,7 +26,7 @@ namespace Runner
             };
             repo.AddMany(items);
 
-            var item = repo.GetById<TestTable>(items.First().Id);
+            var item = repo.GetById(new TestTable{Id = items.First().Id});
             item.Name = "we editedit";
             repo.Update(item);
             items = repo.GetAll<TestTable>().ToArray();
@@ -43,7 +43,7 @@ namespace Runner
             var asyncRepo = new SqlRepoAsync(connection);
             await asyncRepo.AddMany(items);
 
-            var item = await asyncRepo.GetById<TestTable>(items.First().Id);
+            var item = await asyncRepo.GetById(new TestTable{Id = items.First().Id});
             item.Name = "we editedit";
             await asyncRepo.Update(item);
             items = (await asyncRepo.GetAll<TestTable>()).ToArray();

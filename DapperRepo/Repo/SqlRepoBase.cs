@@ -10,15 +10,19 @@ namespace DapperRepo.Repo
     {
         private readonly string _connectionString;
 
+        private string WhereClause(ReflectionUtils.EntityPropertyInfo entityPropertyInfo) =>
+            $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+
         public SqlRepoBase(string connectionString)
         {
             _connectionString = connectionString;
         }
 
 
-        internal Task<T> BaseGet<T>(Guid id, Func<SqlConnection, string, Task<T>> func)
+        internal Task<T> BaseGet<T>(Func<SqlConnection, string, Task<T>> func)
         {
-            var sqlQuery = $"select * from {typeof(T).Name} where Id = '{id}'";
+            var props = ReflectionUtils.GetBaseEntityProperyInfo<T>();
+            var sqlQuery = $"select * from {typeof(T).Name} {WhereClause(props)}";
             return func.Invoke(new SqlConnection(_connectionString), sqlQuery);
         }
 
@@ -30,25 +34,25 @@ namespace DapperRepo.Repo
         // we need to return here to ensure if its async it completes the task hence we use func not action
         internal Task BaseAddMany<T>(Func<SqlConnection, string, Task> action)
         {
-            var properties = typeof(T).GetProperties().Select(f => f.Name).ToArray();
+            var properties = ReflectionUtils.GetBaseEntityProperyInfo<T>().All.Select(f => f.Name).ToArray();
             var sql = $"insert into {typeof(T).Name} ( {string.Join(",", properties)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
             return action.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
         {
-            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo(element);
+            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
                 .Where(f => ignoreNullProperties ? typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null : true)
                 .Select(f => $"{f.Name} = @{f.Name}");
 
-            var sql = $"update  {typeof(T).Name} set  {string.Join(",", updates)} where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+            var sql = $"update  {typeof(T).Name} set  {string.Join(",", updates)} {WhereClause(entityPropertyInfo)}";
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal Task BaseDelete<T>(T element, Func<SqlConnection, string, Task> func)
         {
-            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo(element);
+            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
             var delete = $"delete from {typeof(T).Name} where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
         }

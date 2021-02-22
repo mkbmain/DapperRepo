@@ -35,7 +35,7 @@ namespace DapperRepoTests.Tests.GetById
             
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
 
-            var item = await SUT.GetById<TestTable>(testTableItems.First().Id);
+            var item = await SUT.GetById(new TestTable{Id = testTableItems.First().Id});
             Assert.IsNotNull(item);
             Assert.AreEqual(testTableItems.First().Id, item.Id);
             Assert.AreEqual(testTableItems.First().SomeNumber, item.SomeNumber);
@@ -53,7 +53,7 @@ namespace DapperRepoTests.Tests.GetById
 
             DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
 
-            var item = await SUT.GetById<TestTable>(Guid.NewGuid());
+            var item = await SUT.GetById(new TestTable{Id =Guid.NewGuid()});
             Assert.IsNull(item);
         }
     }

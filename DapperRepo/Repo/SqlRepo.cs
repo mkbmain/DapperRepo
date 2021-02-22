@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
@@ -11,9 +10,9 @@ namespace DapperRepo.Repo
         {
         }
 
-        public T GetById<T>(Guid Id)
+        public T GetById<T>(T element)
         {
-            return BaseGet(Id, (connection, s) => Task.FromResult(connection.QueryFirstOrDefault<T>(s))).Result;
+            return BaseGet((connection, s) => Task.FromResult(connection.QueryFirstOrDefault<T>(s, element))).Result;
         }
 
         public IEnumerable<T> GetAll<T>()
