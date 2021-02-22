@@ -17,7 +17,7 @@ namespace DapperRepo.Repo
 
         public Task<IEnumerable<T>> GetAll<T>()
         {
-            return BaseGetAll(async (connection, s) => (await connection.QueryAsync<T>(s)));
+            return BaseGetAll((connection, s) => (connection.QueryAsync<T>(s)));
         }
 
         public Task AddMany<T>(IEnumerable<T> elements)
