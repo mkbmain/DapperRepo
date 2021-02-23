@@ -64,6 +64,7 @@ namespace DapperRepoTests.Utils
                     }
 
                     System.Reflection.PropertyInfo propertyInfo = item.GetType().GetProperty(dataRecord.GetName(i));
+                    if(propertyInfo == null){continue;}
                     propertyInfo.SetValue(item, Convert.ChangeType(dataRecord[i], propertyInfo.PropertyType), null);
                 }
 

@@ -21,10 +21,10 @@ namespace DapperRepoTests.Tests.GetById
                 new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33},
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, testTableItems);
 
 
-            var item = Sut.GetById(new TestTable{Id = testTableItems.First().Id});;
+            var item = Sut.GetById(new TestTable{Id = testTableItems.First().Id});
             Assert.IsNotNull(item);
             Assert.AreEqual(testTableItems.First().Id, item.Id);
             Assert.AreEqual(testTableItems.First().SomeNumber, item.SomeNumber);
@@ -40,9 +40,9 @@ namespace DapperRepoTests.Tests.GetById
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
             
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, testTableItems);
 
-            var item = Sut.GetById(new TestTable{Id = Guid.NewGuid()});;
+            var item = Sut.GetById(new TestTable{Id = Guid.NewGuid()});
             Assert.IsNull(item);
         }
     }

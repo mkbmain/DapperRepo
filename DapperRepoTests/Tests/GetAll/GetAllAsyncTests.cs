@@ -23,7 +23,7 @@ namespace DapperRepoTests.Tests.GetAll
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
             
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, testTableItems);
             
             var items = (await Sut.GetAll<TestTable>()).ToArray();
 

@@ -26,7 +26,7 @@ namespace DapperRepoTests.Tests.AddMany
 
             await Sut.AddMany(testTableItems);
 
-            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection);
             var items = result as TestTable[] ?? result.ToArray();
 
             Assert.AreEqual(testTableItems.Length, items.Length);

@@ -10,7 +10,7 @@ namespace DapperRepo.Repo
     {
         private readonly string _connectionString;
 
-        private string WhereClause(ReflectionUtils.EntityPropertyInfo entityPropertyInfo) =>
+        private string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
 
         public SqlRepoBase(string connectionString)

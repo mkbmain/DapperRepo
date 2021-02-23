@@ -23,7 +23,7 @@ namespace DapperRepoTests.Tests.GetById
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
             
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, testTableItems);
 
             var item = await Sut.GetById(new TestTable{Id = testTableItems.First().Id});
             Assert.IsNotNull(item);
@@ -41,7 +41,7 @@ namespace DapperRepoTests.Tests.GetById
                 new TestTable {Id = Guid.NewGuid(), Name = "othername", SomeNumber = 1}
             };
 
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, testTableItems);
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, testTableItems);
 
             var item = await Sut.GetById(new TestTable{Id =Guid.NewGuid()});
             Assert.IsNull(item);

@@ -14,18 +14,18 @@ namespace DapperRepoTests.Tests.BaseTestClasses
         protected static string RandomChars => Guid.NewGuid().ToString("N").Substring(0, 6);
         protected string DbName;
 
-        protected string _connection => Connection.MasterConnectionString.Replace("master", DbName);
+        protected string Connection => DapperRepoTests.Connection.MasterConnectionString.Replace("master", DbName);
 
         [SetUp]
         public void Setup()
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(Connection.MasterConnectionString, DbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
+            DataBaseScriptRunnerAndBuilder.RunDb(DapperRepoTests.Connection.MasterConnectionString, DbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
         }
 
         [TearDown]
         public void TearDown()
         {
-            DataBaseScriptRunnerAndBuilder.KillDb(Connection.MasterConnectionString, DbName);
+            DataBaseScriptRunnerAndBuilder.KillDb(DapperRepoTests.Connection.MasterConnectionString, DbName);
         }
     }
 }

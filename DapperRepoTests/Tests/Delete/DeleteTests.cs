@@ -20,10 +20,10 @@ namespace DapperRepoTests.Tests.Delete
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
             var dontTouch = new TestTable {Id = Guid.NewGuid(), Name = "gwgw", SomeNumber = 12};
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new[] {testTableItem, dontTouch});
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, new[] {testTableItem, dontTouch});
             Sut.Delete(testTableItem);
 
-            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection).ToArray();
 
             Assert.AreEqual(1, records.Count());
             Assert.AreEqual(dontTouch.Id, records.First().Id);

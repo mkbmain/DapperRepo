@@ -18,13 +18,13 @@ namespace DapperRepoTests.Tests.Update
         public async Task Ensure_we_can_update_a_record()
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new []{testTableItem});
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, new []{testTableItem});
             
             testTableItem.Name = "SomeOtherNAme";
             testTableItem.SomeNumber = 532;
             await Sut.Update(testTableItem);
 
-            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection).ToArray();
                 
             Assert.AreEqual(1,records.Count());
             Assert.AreEqual(testTableItem.Id, records.First().Id);
@@ -37,13 +37,13 @@ namespace DapperRepoTests.Tests.Update
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
             var dontTouch = new TestTable {Id = Guid.NewGuid(), Name = "tgwre", SomeNumber = 33};
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new []{testTableItem ,dontTouch  });
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, new []{testTableItem ,dontTouch  });
             
             testTableItem.Name = "SomeOtherNAme";
             testTableItem.SomeNumber = 532;
             await Sut.Update(testTableItem);
 
-            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection).ToArray();
                 
             Assert.AreEqual(2,records.Count());
             Assert.AreEqual(testTableItem.Id, records.First(f=> f.Id == testTableItem.Id).Id);
@@ -59,13 +59,13 @@ namespace DapperRepoTests.Tests.Update
         public async Task Ensure_we_can_ignore_null_update_a_record()
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new []{testTableItem});
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, new []{testTableItem});
             
             testTableItem.Name =null;
             testTableItem.SomeNumber = 532;
             await Sut.Update(testTableItem, true);
 
-            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection).ToArray();
                 
             Assert.AreEqual(1,records.Count());
             Assert.AreEqual(testTableItem.Id, records.First().Id);
@@ -77,13 +77,13 @@ namespace DapperRepoTests.Tests.Update
         public async Task Ensure_we_dont_ignore_nulls_by_default()
         {
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
-            DataBaseScriptRunnerAndBuilder.InsertTestTables(_connection, new []{testTableItem});
+            DataBaseScriptRunnerAndBuilder.InsertTestTables(Connection, new []{testTableItem});
             
             testTableItem.Name =null;
             testTableItem.SomeNumber = 532;
             await Sut.Update(testTableItem);
 
-            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var records = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection).ToArray();
                 
             Assert.AreEqual(1,records.Count());
             Assert.AreEqual(testTableItem.Id, records.First().Id);

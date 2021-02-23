@@ -20,11 +20,12 @@ namespace DapperRepoTests.Tests.Add
             var testTableItem = new TestTable {Id = Guid.NewGuid(), Name = "Michale", SomeNumber = 33};
             await Sut.Add(testTableItem);
 
-            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(_connection);
+            var result = DataBaseScriptRunnerAndBuilder.GetAll<TestTable>(Connection);
             var items = result as TestTable[] ?? result.ToArray();
 
             Assert.AreEqual(1, items.Length);
             var test = items.FirstOrDefault();
+            Assert.IsNotNull(test);
             Assert.AreEqual(testTableItem.Id, test.Id);
             Assert.AreEqual(testTableItem.Name, test.Name);
             Assert.AreEqual(testTableItem.SomeNumber, test.SomeNumber);
