@@ -10,6 +10,5 @@ namespace DapperRepo
             var id = properties.FirstOrDefault(f => f.GetCustomAttributes(typeof(PrimaryKeyAttribute), false).Any()); // primary key determined by attribute now
             return new EntityPropertyInfo(id, properties);
         }
-        
     }
 }
