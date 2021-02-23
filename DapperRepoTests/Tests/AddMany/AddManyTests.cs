@@ -10,7 +10,7 @@ namespace DapperRepoTests.Tests.AddMany
     public class AddManyDbSyncTests : BaseDbSyncTestClass
     {
 
-        public AddManyDbSyncTests() : base( $"AddManyDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public AddManyDbSyncTests() : base( $"{nameof(AddManyDbSyncTests)}{RandomChars}")
         {
         }
         

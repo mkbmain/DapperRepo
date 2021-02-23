@@ -1,3 +1,4 @@
+using System;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
@@ -10,6 +11,7 @@ namespace DapperRepoTests.Tests.BaseTestClasses
             DbName = dbName;
         }
 
+        protected static string RandomChars => Guid.NewGuid().ToString("N").Substring(0, 6);
         protected string DbName;
 
         protected string _connection => Connection.MasterConnectionString.Replace("master", DbName);

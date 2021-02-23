@@ -10,7 +10,7 @@ namespace DapperRepoTests.Tests.Delete
 {
     public class DeleteDbSyncTest : BaseDbSyncTestClass
     {
-        public DeleteDbSyncTest() : base( $"DeleteDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public DeleteDbSyncTest() : base( $"{nameof(DeleteDbSyncTest)}{RandomChars}")
         {
         }
         

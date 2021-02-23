@@ -10,7 +10,7 @@ namespace DapperRepoTests.Tests.Add
 {
     public class AddTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
     {
-        public AddTestClassAsyncDbAsyncTests() : base($"AddAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public AddTestClassAsyncDbAsyncTests() : base($"{nameof(AddTestClassAsyncDbAsyncTests)}{RandomChars}")
         {
         }
         

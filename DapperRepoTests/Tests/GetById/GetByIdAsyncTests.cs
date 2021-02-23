@@ -10,7 +10,7 @@ namespace DapperRepoTests.Tests.GetById
 {
     public class GetByIdTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
     {
-        public GetByIdTestClassAsyncDbAsyncTest() : base( $"GetByIdAsyncDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public GetByIdTestClassAsyncDbAsyncTest() : base( $"{nameof(GetByIdTestClassAsyncDbAsyncTest)}{RandomChars}")
         {
         }
 

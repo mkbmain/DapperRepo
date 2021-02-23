@@ -9,7 +9,7 @@ namespace DapperRepoTests.Tests.GetById
 {
     public class GetByIdDbSyncTest : BaseDbSyncTestClass
     {
-        public GetByIdDbSyncTest() : base( $"GetByIdDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public GetByIdDbSyncTest() : base( $"{nameof(GetByIdDbSyncTest)}{RandomChars}")
         {
         }
 

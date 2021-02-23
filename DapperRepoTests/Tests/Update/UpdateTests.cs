@@ -10,7 +10,7 @@ namespace DapperRepoTests.Tests.Update
 {
     public class UpdateDbSyncTest : BaseDbSyncTestClass
     {
-        public UpdateDbSyncTest() : base( $"UpdateDapperRepoTests{Guid.NewGuid().ToString("N").Substring(0, 5)}")
+        public UpdateDbSyncTest() : base( $"{nameof(UpdateDbSyncTest)}{RandomChars}")
         {
         }
 
