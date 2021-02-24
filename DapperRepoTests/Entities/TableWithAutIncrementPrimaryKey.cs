@@ -1,14 +1,13 @@
-using System;
 using DapperRepo;
 
 namespace DapperRepoTests.Entities
 {
-    public class TestTable
+    public class TableWithAutIncrementPrimaryKey
     {
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public int? Id { get; set; }
 
         public string Name { get; set; }
-        public int SomeNumber { get; set; }
+        public int? SomeNumber { get; set; }
     }
 }

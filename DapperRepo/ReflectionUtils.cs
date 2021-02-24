@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("DapperRepoTests")]
 namespace DapperRepo
 {
     internal static class ReflectionUtils

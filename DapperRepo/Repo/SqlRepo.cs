@@ -22,16 +22,16 @@ namespace DapperRepo.Repo
 
         public void AddMany<T>(IEnumerable<T> elements)
         {
-            BaseAddMany<T>((connection, s) =>
+            BaseAddMany(elements, (connection, s) =>
             {
                 connection.Execute(s, elements);
                 return Task.CompletedTask;
-            });
+            }, false);
         }
 
-        public void Add<T>(T element)
+        public T Add<T>(T element)
         {
-            AddMany(new[] {element});
+            return BaseAddMany(new[] {element}, (connection, s) => connection.QuerySingle<T>(s, element), true);
         }
 
         public void Update<T>(T element, bool ignoreNullProperties = false)

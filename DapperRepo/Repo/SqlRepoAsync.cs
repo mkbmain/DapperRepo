@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 
@@ -22,12 +23,12 @@ namespace DapperRepo.Repo
 
         public Task AddMany<T>(IEnumerable<T> elements)
         {
-            return BaseAddMany<T>((connection, s) => connection.ExecuteAsync(s, elements));
+            return BaseAddMany<T,Task>(elements,(connection, s) => connection.ExecuteAsync(s, elements),false);
         }
 
-        public Task Add<T>(T element)
+        public Task<T> Add<T>(T element)
         {
-            return AddMany(new[] {element});
+            return BaseAddMany(new []{element}, async (connection, s) => (await connection.QueryAsync<T>(s, element)).First(),true);
         }
 
         public Task Update<T>(T element, bool ignoreNullProperties = false)
