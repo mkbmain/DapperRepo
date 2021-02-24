@@ -12,17 +12,17 @@ namespace DapperRepo.Repo
 
         public T GetById<T>(T element)
         {
-            return BaseGet((connection, s) => Task.FromResult(connection.QueryFirstOrDefault<T>(s, element))).Result;
+            return BaseGet<T, T>((connection, s) => connection.QueryFirstOrDefault<T>(s, element));
         }
 
         public IEnumerable<T> GetAll<T>()
         {
-            return BaseGetAll((connection, s) => Task.FromResult(connection.Query<T>(s))).Result;
+            return BaseGetAll<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s));
         }
 
         public void AddMany<T>(IEnumerable<T> elements)
         {
-            BaseAddMany(elements, (connection, s) =>
+            BaseAdd(elements, (connection, s) =>
             {
                 connection.Execute(s, elements);
                 return Task.CompletedTask;
@@ -31,7 +31,7 @@ namespace DapperRepo.Repo
 
         public T Add<T>(T element)
         {
-            return BaseAddMany(new[] {element}, (connection, s) => connection.QuerySingle<T>(s, element), true);
+            return BaseAdd(new[] {element}, (connection, s) => connection.QuerySingle<T>(s, element), true);
         }
 
         public void Update<T>(T element, bool ignoreNullProperties = false)

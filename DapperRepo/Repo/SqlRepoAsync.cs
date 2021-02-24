@@ -13,22 +13,22 @@ namespace DapperRepo.Repo
 
         public Task<T> GetById<T>(T element)
         {
-            return BaseGet((connection, s) => connection.QueryFirstOrDefaultAsync<T>(s, element));
+            return BaseGet<T, Task<T>>((connection, s) => connection.QueryFirstOrDefaultAsync<T>(s, element));
         }
 
         public Task<IEnumerable<T>> GetAll<T>()
         {
-            return BaseGetAll((connection, s) => (connection.QueryAsync<T>(s)));
+            return BaseGetAll<T, Task<IEnumerable<T>>>((connection, s) => (connection.QueryAsync<T>(s)));
         }
 
         public Task AddMany<T>(IEnumerable<T> elements)
         {
-            return BaseAddMany<T,Task>(elements,(connection, s) => connection.ExecuteAsync(s, elements),false);
+            return BaseAdd<T, Task>(elements, (connection, s) => connection.ExecuteAsync(s, elements), false);
         }
 
         public Task<T> Add<T>(T element)
         {
-            return BaseAddMany(new []{element}, async (connection, s) => (await connection.QueryAsync<T>(s, element)).First(),true);
+            return BaseAdd(new[] {element}, async (connection, s) => (await connection.QueryAsync<T>(s, element)).First(), true);
         }
 
         public Task Update<T>(T element, bool ignoreNullProperties = false)

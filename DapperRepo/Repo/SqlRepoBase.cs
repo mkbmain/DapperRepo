@@ -9,39 +9,37 @@ namespace DapperRepo.Repo
     public abstract class SqlRepoBase
     {
         private readonly string _connectionString;
-
-        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
-            $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) => $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
 
         public SqlRepoBase(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        internal Task<T> BaseGet<T>(Func<SqlConnection, string, Task<T>> func)
+        internal TOut BaseGet<T,TOut>(Func<SqlConnection, string, TOut> func)
         {
-            var sqlQuery =
-                $"select * from {typeof(T).Name} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}";
-            return func.Invoke(new SqlConnection(_connectionString), sqlQuery);
+            return BaseGetAll<T, TOut>((connection, s) => func(connection, $"{s} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}"));
         }
 
-        internal Task<IEnumerable<T>> BaseGetAll<T>(Func<SqlConnection, string, Task<IEnumerable<T>>> func)
+        internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return func.Invoke(new SqlConnection(_connectionString), $"select * from {typeof(T).Name}");
         }
 
-        internal TOut BaseAddMany<T,TOut>(IEnumerable<T> elements, Func<SqlConnection, string,TOut> action, bool withOutput)
+        internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
+            bool withOutput)
         {
             var propertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
             var properties = propertyInfo.All
-                .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) !=null))
+                .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) != null))
                 .Select(f => f.Name)
                 .ToArray();
-            var sql = $"insert into {typeof(T).Name} ( {string.Join(",", properties)})  {(withOutput ?  $"output inserted.*" :"")} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+            var output = withOutput ? $"output inserted.*" : "";
+            var sql = $"insert into {typeof(T).Name} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(new SqlConnection(_connectionString), sql);
         }
-        
+
         // we need to return here to ensure if its async it completes the task hence we use func not action
         internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
         {
