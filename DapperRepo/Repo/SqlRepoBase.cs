@@ -10,7 +10,7 @@ namespace DapperRepo.Repo
     {
         private readonly string _connectionString;
 
-        private string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
+        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
 
         public SqlRepoBase(string connectionString)
@@ -30,28 +30,24 @@ namespace DapperRepo.Repo
             return func.Invoke(new SqlConnection(_connectionString), $"select * from {typeof(T).Name}");
         }
 
-        internal Y BaseAddMany<T,Y>(IEnumerable<T> elements, Func<SqlConnection, string,Y> action, bool withOutput)
+        internal TOut BaseAddMany<T,TOut>(IEnumerable<T> elements, Func<SqlConnection, string,TOut> action, bool withOutput)
         {
             var propertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
             var properties = propertyInfo.All
                 .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) !=null))
                 .Select(f => f.Name)
                 .ToArray();
-            string output = withOutput ?  $"output inserted.*" :"";
-            var sql = $"insert into {typeof(T).Name} ( {string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+            var sql = $"insert into {typeof(T).Name} ( {string.Join(",", properties)})  {(withOutput ?  $"output inserted.*" :"")} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(new SqlConnection(_connectionString), sql);
         }
         
         // we need to return here to ensure if its async it completes the task hence we use func not action
-
         internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
         {
             var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
-                .Where(f => ignoreNullProperties
-                    ? typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null
-                    : true)
+                .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
                 .Select(f => $"{f.Name} = @{f.Name}");
 
             var sql = $"update  {typeof(T).Name} set  {string.Join(",", updates)} {WhereClause(entityPropertyInfo)}";
