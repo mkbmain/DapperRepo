@@ -8,9 +8,9 @@ using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Update
 {
-    public class UpdateTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
+    public class UpdateAsyncTests : BaseAsyncTestClass
     {
-        public UpdateTestClassAsyncDbAsyncTest() : base( $"{nameof(UpdateTestClassAsyncDbAsyncTest)}{RandomChars}")
+        public UpdateAsyncTests() : base( $"{nameof(UpdateAsyncTests)}{RandomChars}")
         {
         }
 

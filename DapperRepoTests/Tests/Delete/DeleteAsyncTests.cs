@@ -8,9 +8,9 @@ using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Delete
 {
-    public class DeleteTestClassAsyncDbAsyncTest : BaseDbAsyncTestClass
+    public class DeleteAsyncTest : BaseAsyncTestClass
     {
-        public DeleteTestClassAsyncDbAsyncTest() : base($"{nameof(DeleteTestClassAsyncDbAsyncTest)}{RandomChars}")
+        public DeleteAsyncTest() : base($"{nameof(DeleteAsyncTest)}{RandomChars}")
         {
         }
 

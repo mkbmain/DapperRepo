@@ -9,21 +9,29 @@ namespace DapperRepo.Repo
     public abstract class SqlRepoBase
     {
         private readonly string _connectionString;
-        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) => $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+
+        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
+            $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
 
         public SqlRepoBase(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        internal TOut BaseGet<T,TOut>(Func<SqlConnection, string, TOut> func)
+        internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
-            return BaseGetAll<T, TOut>((connection, s) => func(connection, $"{s} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}"));
+            return BaseGetAll<T, TOut>((connection, s) =>
+                func(connection, $"{s} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}"));
         }
 
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
-            return func.Invoke(new SqlConnection(_connectionString), $"select * from {typeof(T).Name}");
+            return BaseGetAll(func, $"select * from {typeof(T).Name}");
+        }
+
+        internal TOut BaseGetAll<TOut>(Func<SqlConnection, string, TOut> func, string sql)
+        {
+            return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
@@ -35,7 +43,8 @@ namespace DapperRepo.Repo
                 .Select(f => f.Name)
                 .ToArray();
             var output = withOutput ? $"output inserted.*" : "";
-            var sql = $"insert into {typeof(T).Name} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+            var sql =
+                $"insert into {typeof(T).Name} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(new SqlConnection(_connectionString), sql);
         }

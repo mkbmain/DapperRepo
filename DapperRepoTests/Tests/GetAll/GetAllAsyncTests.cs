@@ -3,14 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using DapperRepoTests.Entities;
 using DapperRepoTests.Tests.BaseTestClasses;
+using DapperRepoTests.Tests.QueryMany;
 using DapperRepoTests.Utils;
 using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.GetAll
 {
-    public class GetAllTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
+    public class GetAllAsyncTests : BaseAsyncTestClass
     {
-        public GetAllTestClassAsyncDbAsyncTests() : base( $"{nameof(GetAllTestClassAsyncDbAsyncTests)}{RandomChars}")
+        public GetAllAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}{RandomChars}")
         {
         }
         

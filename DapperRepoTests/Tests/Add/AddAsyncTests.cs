@@ -8,9 +8,9 @@ using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Add
 {
-    public class AddTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
+    public class AddAsyncTests : BaseAsyncTestClass
     {
-        public AddTestClassAsyncDbAsyncTests() : base($"{nameof(AddTestClassAsyncDbAsyncTests)}{RandomChars}")
+        public AddAsyncTests() : base($"{nameof(AddAsyncTests)}{RandomChars}")
         {
         }
 

@@ -7,9 +7,9 @@ using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.Add
 {
-    public class AddDbSyncTests : BaseDbSyncTestClass
+    public class AddTests : BaseSyncTestClass
     {
-        public AddDbSyncTests() : base($"{nameof(AddDbSyncTests)}{RandomChars}")
+        public AddTests() : base($"{nameof(AddTests)}{RandomChars}")
         {
         }
 

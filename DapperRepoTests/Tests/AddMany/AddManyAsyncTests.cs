@@ -11,9 +11,9 @@ using NUnit.Framework;
 
 namespace DapperRepoTests.Tests.AddMany
 {
-    public class AddManyTestClassAsyncDbAsyncTests : BaseDbAsyncTestClass
+    public class AddManyAsyncTests : BaseAsyncTestClass
     {
-        public AddManyTestClassAsyncDbAsyncTests() : base($"{nameof(AddManyTestClassAsyncDbAsyncTests)}{RandomChars}")
+        public AddManyAsyncTests() : base($"{nameof(AddManyAsyncTests)}{RandomChars}")
         {
         }
 

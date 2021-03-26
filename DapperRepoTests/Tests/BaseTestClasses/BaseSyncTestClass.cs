@@ -2,11 +2,11 @@ using DapperRepo.Repo;
 
 namespace DapperRepoTests.Tests.BaseTestClasses
 {
-    public abstract class BaseDbSyncTestClass : BaseDbSetupTestClass
+    public abstract class BaseSyncTestClass : BaseDbSetupTestClass
     {
         protected SqlRepo Sut => new SqlRepo(Connection);
 
-        protected BaseDbSyncTestClass(string dbName) : base(dbName)
+        protected BaseSyncTestClass(string dbName) : base(dbName)
         {
         }
     }
