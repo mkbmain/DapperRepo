@@ -17,7 +17,6 @@ namespace DapperRepo.Repo
         {
             _connectionString = connectionString;
         }
-
         internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
@@ -32,6 +31,11 @@ namespace DapperRepo.Repo
         internal TOut BaseGetAll<TOut>(Func<SqlConnection, string, TOut> func, string sql)
         {
             return func.Invoke(new SqlConnection(_connectionString), sql);
+        }
+        
+        internal Tout Search<T, Tout>(Func<SqlConnection, string, Tout> func,string property) 
+        {
+            return BaseGetAll<T, Tout>((connection, sql2) => func(connection,($"{sql2} where {property} like  @{property}")));
         }
 
         internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
