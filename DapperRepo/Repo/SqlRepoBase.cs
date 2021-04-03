@@ -20,7 +20,7 @@ namespace DapperRepo.Repo
         internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
-                func(connection, $"{s} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}"));
+                func(connection, $"{s} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
 
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
@@ -41,7 +41,7 @@ namespace DapperRepo.Repo
         internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
             bool withOutput)
         {
-            var propertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
+            var propertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var properties = propertyInfo.All
                 .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) != null))
                 .Select(f => f.Name)
@@ -56,7 +56,7 @@ namespace DapperRepo.Repo
         // we need to return here to ensure if its async it completes the task hence we use func not action
         internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
         {
-            var entityPropertyInfo = ReflectionUtils.GetBaseEntityProperyInfo<T>();
+            var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
                 .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
                 .Select(f => $"{f.Name} = @{f.Name}");
@@ -67,7 +67,7 @@ namespace DapperRepo.Repo
 
         internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
         {
-            var delete = $"delete from {typeof(T).Name} {WhereClause(ReflectionUtils.GetBaseEntityProperyInfo<T>())}";
+            var delete = $"delete from {typeof(T).Name} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
         }
     }

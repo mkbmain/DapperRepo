@@ -8,7 +8,7 @@ namespace DapperRepo
 {
     internal static class ReflectionUtils
     {
-        internal static EntityPropertyInfo GetBaseEntityProperyInfo<T>()
+        internal static EntityPropertyInfo GetEntityPropertyInfo<T>()
         {
             var properties = typeof(T).GetProperties().ToArray();
             var id = properties.FirstOrDefault(f => f.GetCustomAttributes(typeof(PrimaryKeyAttribute), false).Any()); // primary key determined by attribute now
@@ -17,16 +17,16 @@ namespace DapperRepo
 
         internal static PropertyInfo GetPropertyInfoOfType<T>(Type type,string property, bool throwIfNotFound =true)
         {
-            var fields = typeof(T).GetProperties().ToArray();
-            var theField = fields.FirstOrDefault(f =>
+            var fields = GetEntityPropertyInfo<T>();
+            var theField = fields.All.FirstOrDefault(f =>
                 f.Name.ToLower() == property.ToLower() && f.PropertyType ==type);
             if (theField == null && throwIfNotFound)
             {
-                if (fields.Any(f => f.Name.ToLower() == property.ToLower()))
+                if (fields.All.Any(f => f.Name.ToLower() == property.ToLower()))
                 {
-                    throw new Exception("Type Must Be string"); 
+                    throw new Exception($"Type Must Be {type.Name}"); 
                 }
-                throw new Exception($"Property:{property} not found in Type:{type.Name}");
+                throw new Exception($"Property:{property} not found in Type:{typeof(T).Name}");
             }
 
             return theField;
