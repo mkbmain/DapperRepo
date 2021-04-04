@@ -2,7 +2,7 @@ using DapperRepo;
 
 namespace DapperRepoTests.Entities
 {
-    public class TableWithAutIncrementPrimaryKey
+    public class TableWithAutoIncrementPrimaryKey
     {
         [PrimaryKey]
         public int? Id { get; set; }

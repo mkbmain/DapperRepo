@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DapperRepo.Repo
@@ -12,6 +13,12 @@ namespace DapperRepo.Repo
 
         private static string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+        
+        private static string GetTableNameFromType(MemberInfo type)
+        {
+            var attribute = type.GetCustomAttribute(typeof(SqlTableNameAttribute), false);
+            return attribute != null ? ((SqlTableNameAttribute) attribute).Name : type.Name;
+        }
 
         public SqlRepoBase(string connectionString)
         {
@@ -25,7 +32,7 @@ namespace DapperRepo.Repo
 
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
-            return BaseGetAll(func, $"select * from {typeof(T).Name}");
+            return BaseGetAll(func, $"select * from {GetTableNameFromType(typeof(T))}");
         }
 
         internal TOut BaseGetAll<TOut>(Func<SqlConnection, string, TOut> func, string sql)
@@ -48,7 +55,7 @@ namespace DapperRepo.Repo
                 .ToArray();
             var output = withOutput ? $"output inserted.*" : "";
             var sql =
-                $"insert into {typeof(T).Name} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(new SqlConnection(_connectionString), sql);
         }
@@ -61,13 +68,13 @@ namespace DapperRepo.Repo
                 .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
                 .Select(f => $"{f.Name} = @{f.Name}");
 
-            var sql = $"update  {typeof(T).Name} set  {string.Join(",", updates)} {WhereClause(entityPropertyInfo)}";
+            var sql = $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {WhereClause(entityPropertyInfo)}";
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
         {
-            var delete = $"delete from {typeof(T).Name} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
+            var delete = $"delete from {GetTableNameFromType(typeof(T))} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
         }
     }

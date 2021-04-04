@@ -11,4 +11,8 @@ namespace DapperRepoTests.Entities
         public string Name { get; set; }
         public int? SomeNumber { get; set; }
     }
+    
+
+        // This is a copy of TableWithAutIncrementPrimaryKey but with different names and sql name makes them the same for testing
+        // this is to test SqlName
 }
