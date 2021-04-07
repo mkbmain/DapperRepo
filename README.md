@@ -6,7 +6,8 @@ Simple dapper repo with async implementation aswell no interface base to build o
 ## creating new entities
 please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
-```[SqlTableName("Test_Table")]         // can be used to get around pluralization and also unconventional table names  
+```
+    [SqlTableName("Test_Table")]         // can be used to get around pluralization and also unconventional table names  
     public class TestTable
     {
         [PrimaryKey] // Required for repo to work effectively
