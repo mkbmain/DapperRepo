@@ -44,7 +44,7 @@ namespace DapperRepo.Repo
 
             theField.SetValue(item, term);
 
-            return Search<T, Task<IEnumerable<T>>>((connection, s) => connection.QueryAsync<T>(s, item), property);
+            return BaseSearch<T, Task<IEnumerable<T>>>((connection, s) => connection.QueryAsync<T>(s, item), property);
         }
 
         public Task<T> Add<T>(T element)

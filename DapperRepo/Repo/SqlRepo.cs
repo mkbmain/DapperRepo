@@ -41,7 +41,7 @@ namespace DapperRepo.Repo
         {
             var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(string), property);
             theField.SetValue(item, term);
-            return Search<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), property);
+            return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), property);
         }
 
         public T Add<T>(T element)

@@ -40,7 +40,7 @@ namespace DapperRepo.Repo
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
         
-        internal Tout Search<T, Tout>(Func<SqlConnection, string, Tout> func,string property) 
+        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func,string property) 
         {
             return BaseGetAll<T, Tout>((connection, sql2) => func(connection,($"{sql2} where {property} like  @{property}")));
         }
