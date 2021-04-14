@@ -2,12 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Title>DapperRepo</Title>
+        <Title>Mkb.DapperRepo</Title>
         <Authors>Mkb</Authors>
         <Description>Basic repo for dapper this is verion 1 which is linked to branch v1.0.0 on https://github.com/mkbmain/DapperRepo </Description>
         <Copyright>Mkb</Copyright>
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
+        <PackageId>Mkb.DapperRepo</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
