@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperRepo", "DapperRepo\DapperRepo.csproj", "{687AF38D-51FA-47C3-A56A-9733A70860F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mkb.DapperRepo", "Mkb.DapperRepo\Mkb.DapperRepo.csproj", "{687AF38D-51FA-47C3-A56A-9733A70860F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperRepoTests", "DapperRepoTests\DapperRepoTests.csproj", "{68F64ECE-A9DB-4071-8C6D-ED494F46196A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mkb.DapperRepo.Tests", "Mkb.DapperRepo.Tests\Mkb.DapperRepo.Tests.csproj", "{68F64ECE-A9DB-4071-8C6D-ED494F46196A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
