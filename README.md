@@ -30,4 +30,50 @@ also please note there are separate getall and insert methods that are raw in  D
 
 Located in CreateDbWithTestTable.Sql you will find the create database scripts
 
+## Usages
+
+
+Search
+```
+Repo.Search<TableModel>("Name", "%cha%"); 
+
+Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
+```
+
+Query single
+```
+Repo.QuerySingle<TableModel>(
+                "select * from TableModel where SomeNumber = 33");
+```
+
+
+Query Multiple
+```
+Repo.QueryMany<TableModel>(
+                "select * from TableModel where SomeNumber = 33");
+```
+
+Get By Id
+```
+Repo.GetById(new TableWithGuid {Id =  Guid.Parse("....")});
+Repo.GetById(new TableWithInt {Id =  325});
+```
+
+Get All
+```
+Repo.GetAll<Table>().ToArray();
+```
+
+Delete
+```
+var item =Repo.GetById(new TableWithInt {Id =  325});
+Repo.Delete(item);
+```
+
+
+Add
+```
+            var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michael", SomeNumber = 44};
+            var resultBack = Sut.Add(testTableItem);
+```
 
