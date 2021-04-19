@@ -16,6 +16,7 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 // if value is null unless told repo will not try to insert null fields but update will this can be overriden using ignoreNullProperties on the update method 
 
         public string Name { get; set; }
+        public string Email { get; set; }
         public int SomeNumber { get; set; }
     }
 ```
