@@ -8,7 +8,7 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
 ```
     [SqlTableName("Test_Table")]         // can be used to get around pluralization and also unconventional table names  
-    public class TestTable
+    public class TableModel
     {
         [PrimaryKey] // Required for repo to work effectively
         public Guid Id { get; set; }
