@@ -18,17 +18,6 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
     }
 ```
 
-## Tests
-Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
-```
-   public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
-```
-
-also please note there are separate getall and insert methods that are raw in  DataBaseScriptRunnerAndBuilder.cs
-
-
-
-Located in CreateDbWithTestTable.Sql you will find the create database scripts
 
 ## Usages
 
@@ -76,4 +65,18 @@ Add
             var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michael", SomeNumber = 44};
             var resultBack = Sut.Add(testTableItem);
 ```
+
+
+
+## Getting Tests working
+Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
+```
+   public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
+```
+
+also please note there are separate getall and insert methods that are raw in  DataBaseScriptRunnerAndBuilder.cs as we don't use the implemenation we are testing for setups or verifies.
+
+
+
+Located in CreateDbWithTestTable.Sql you will find the create database scripts
 
