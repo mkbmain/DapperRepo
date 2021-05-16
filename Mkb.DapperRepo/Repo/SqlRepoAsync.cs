@@ -10,7 +10,6 @@ namespace Mkb.DapperRepo.Repo
         public SqlRepoAsync(string connectionString) : base(connectionString)
         {
         }
-        
 
         public virtual Task<T> QuerySingle<T>(string sql)
         {
@@ -34,16 +33,13 @@ namespace Mkb.DapperRepo.Repo
         
         public virtual Task<IEnumerable<T>> Search<T>(string property, string term) where T : class, new()
         {
-            T item = new T();
-            return Search(item, property, term);
+            return Search(new T(), property, term);
         }
 
         public virtual Task<IEnumerable<T>> Search<T>(T item, string property, string term) 
         {
             var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(string), property);
-
             theField.SetValue(item, term);
-
             return BaseSearch<T, Task<IEnumerable<T>>>((connection, s) => connection.QueryAsync<T>(s, item), property);
         }
 

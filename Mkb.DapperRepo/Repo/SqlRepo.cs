@@ -9,8 +9,7 @@ namespace Mkb.DapperRepo.Repo
         public SqlRepo(string connectionString) : base(connectionString)
         {
         }
-
-
+        
         public virtual T QuerySingle<T>(string sql)
         {
             return BaseGetAll((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2), sql);
@@ -33,8 +32,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual IEnumerable<T> Search<T>(string property, string term) where T : class, new()
         {
-            T item = new T();
-            return Search(item, property, term);
+            return Search(new T(), property, term);
         }
 
         public virtual IEnumerable<T> Search<T>(T item, string property, string term)
