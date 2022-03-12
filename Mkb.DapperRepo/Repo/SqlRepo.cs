@@ -19,6 +19,18 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseGetAll((connection, sql2) => connection.Query<T>(sql2), sql);
         }
+        
+        public virtual IEnumerable<T> GetAllByX<T,PropT>(string property, object term) where T : class, new()
+        {
+            return GetAllByX<T,PropT>(new T(), property, term);
+        }
+        
+        public virtual IEnumerable<T> GetAllByX<T,PropT>(T item, string property,object valueToSearchBy)
+        {
+            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
+            theField.SetValue(item, valueToSearchBy);
+            return BaseGetAllByX<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), property);
+        }
 
         public virtual T GetById<T>(T element)
         {

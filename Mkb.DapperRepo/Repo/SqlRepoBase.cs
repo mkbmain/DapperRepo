@@ -11,7 +11,7 @@ namespace Mkb.DapperRepo.Repo
     {
         private readonly string _connectionString;
 
-        private static string WhereClause(EntityPropertyInfo entityPropertyInfo) =>
+        private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
         
         private static string GetTableNameFromType(MemberInfo type)
@@ -27,7 +27,12 @@ namespace Mkb.DapperRepo.Repo
         internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
-                func(connection, $"{s} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
+                func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
+        }
+        
+        internal TOut BaseGetAllByX<T, TOut>(Func<SqlConnection, string, TOut> func,string property)
+        {
+            return BaseGetAll<T, TOut>((connection, sql2) => func(connection,($"{sql2} where {property} like  @{property}")));
         }
 
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
@@ -68,13 +73,13 @@ namespace Mkb.DapperRepo.Repo
                 .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
                 .Select(f => $"{f.Name} = @{f.Name}");
 
-            var sql = $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {WhereClause(entityPropertyInfo)}";
+            var sql = $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
         {
-            var delete = $"delete from {GetTableNameFromType(typeof(T))} {WhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
+            var delete = $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
         }
     }

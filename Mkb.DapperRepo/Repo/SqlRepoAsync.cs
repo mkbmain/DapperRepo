@@ -20,7 +20,19 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseGetAll((connection, sql2) => connection.QueryAsync<T>(sql2), sql);
         }
-
+        
+        public virtual Task<IEnumerable<T>> GetAllByX<T,PropT>(string property, object term) where T : class, new()
+        {
+            return GetAllByX<T,PropT>(new T(), property, term);
+        }
+        
+        public virtual Task<IEnumerable<T>> GetAllByX<T,PropT>(T item, string property, object term) 
+        {
+            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
+            theField.SetValue(item, term);
+            return BaseGetAllByX<T, Task<IEnumerable<T>>>((connection, s) => connection.QueryAsync<T>(s, item), property);
+        }
+        
         public virtual Task<T> GetById<T>(T element)
         {
             return BaseGet<T, Task<T>>((connection, s) => connection.QueryFirstOrDefaultAsync<T>(s, element));
