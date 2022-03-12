@@ -4,6 +4,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Reflection;
+using Mkb.DapperRepo.Search;
 
 namespace Mkb.DapperRepo.Repo
 {
@@ -13,7 +16,7 @@ namespace Mkb.DapperRepo.Repo
 
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
-        
+
         private static string GetTableNameFromType(MemberInfo type)
         {
             var attribute = type.GetCustomAttribute(typeof(SqlTableNameAttribute), false);
@@ -24,15 +27,17 @@ namespace Mkb.DapperRepo.Repo
         {
             _connectionString = connectionString;
         }
+
         internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
                 func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
-        
-        internal TOut BaseGetAllByX<T, TOut>(Func<SqlConnection, string, TOut> func,string property)
+
+        internal TOut BaseGetAllByX<T, TOut>(Func<SqlConnection, string, TOut> func, string property)
         {
-            return BaseGetAll<T, TOut>((connection, sql2) => func(connection,($"{sql2} where {property} like  @{property}")));
+            return BaseGetAll<T, TOut>((connection, sql2) =>
+                func(connection, ($"{sql2} where {property} like  @{property}")));
         }
 
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
@@ -44,10 +49,20 @@ namespace Mkb.DapperRepo.Repo
         {
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
-        
-        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func,string property) 
+
+        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func, string property)
         {
-            return BaseGetAll<T, Tout>((connection, sql2) => func(connection,($"{sql2} where {property} like  @{property}")));
+            return BaseGetAll<T, Tout>((connection, sql2) =>
+                func(connection, ($"{sql2} where {property} like  @{property}")));
+        }
+
+        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func,
+            IEnumerable<SearchCriteria> searchCriteria)
+        {
+            var searches = string.Join(" And ",
+                searchCriteria.Select(e =>
+                    $"{e.PropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  @{e.PropertyName}"));
+            return BaseGetAll<T, Tout>((connection, sql2) => func(connection, ($"{sql2} where  {searches} ")));
         }
 
         internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
@@ -73,14 +88,23 @@ namespace Mkb.DapperRepo.Repo
                 .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
                 .Select(f => $"{f.Name} = @{f.Name}");
 
-            var sql = $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
+            var sql =
+                $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
             return func.Invoke(new SqlConnection(_connectionString), sql);
         }
 
         internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
         {
-            var delete = $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
+            var delete =
+                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(new SqlConnection(_connectionString), delete);
+        }
+
+        protected static T SetFieldOf<T, PropT>(T item, string property, object valueToSearchBy)
+        {
+            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
+            theField.SetValue(item, valueToSearchBy);
+            return item;
         }
     }
 }

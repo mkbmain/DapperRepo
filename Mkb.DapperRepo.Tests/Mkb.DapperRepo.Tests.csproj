@@ -25,5 +25,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>  
   </ItemGroup>
+	
+	 <ItemGroup>
+	   <Folder Include="Tests\Repo" />
+	 </ItemGroup>
 
 </Project>

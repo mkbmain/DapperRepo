@@ -1,3 +1,5 @@
+using Mkb.DapperRepo.Attributes;
+
 namespace Mkb.DapperRepo.Tests.Entities
 {
     [SqlTableName("TableWithAutoIncrementPrimaryKey")]
