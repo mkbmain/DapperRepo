@@ -1,4 +1,5 @@
 using System;
+using Mkb.DapperRepo.Reflection;
 using NUnit.Framework;
 
 namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
+using Mkb.DapperRepo.Search;
 
 namespace Mkb.DapperRepo.Repo
 {
@@ -22,14 +23,8 @@ namespace Mkb.DapperRepo.Repo
         
         public virtual IEnumerable<T> GetAllByX<T,PropT>(string property, object term) where T : class, new()
         {
-            return GetAllByX<T,PropT>(new T(), property, term);
-        }
-        
-        public virtual IEnumerable<T> GetAllByX<T,PropT>(T item, string property,object valueToSearchBy)
-        {
-            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
-            theField.SetValue(item, valueToSearchBy);
-            return BaseGetAllByX<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), property);
+            return Search(SetFieldOf<T, PropT>(new T(), property, term),
+                new SearchCriteria {PropertyName = property, SearchType = SearchType.Equals});
         }
 
         public virtual T GetById<T>(T element)
@@ -44,14 +39,17 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual IEnumerable<T> Search<T>(string property, string term) where T : class, new()
         {
-            return Search(new T(), property, term);
+            return Search<T>(SetFieldOf<T, string>(new T(), property, term),
+                new SearchCriteria {PropertyName = property, SearchType = SearchType.Like});
         }
-
-        public virtual IEnumerable<T> Search<T>(T item, string property, string term)
+        
+        public virtual IEnumerable<T> Search<T>(T item, SearchCriteria searchCriteria)
         {
-            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(string), property);
-            theField.SetValue(item, term);
-            return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), property);
+            return Search(item, new[] {searchCriteria});
+        }
+        public virtual IEnumerable<T> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
+        {
+            return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
         }
 
         public virtual T Add<T>(T element)

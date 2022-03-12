@@ -1,4 +1,5 @@
 using System.Linq;
+using Mkb.DapperRepo.Reflection;
 using Mkb.DapperRepo.Tests.Entities;
 using NUnit.Framework;
 
