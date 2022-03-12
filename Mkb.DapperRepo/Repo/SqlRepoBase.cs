@@ -33,13 +33,7 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, TOut>((connection, s) =>
                 func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
-
-        internal TOut BaseGetAllByX<T, TOut>(Func<SqlConnection, string, TOut> func, string property)
-        {
-            return BaseGetAll<T, TOut>((connection, sql2) =>
-                func(connection, ($"{sql2} where {property} like  @{property}")));
-        }
-
+        
         internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
         {
             return BaseGetAll(func, $"select * from {GetTableNameFromType(typeof(T))}");
@@ -48,12 +42,6 @@ namespace Mkb.DapperRepo.Repo
         internal TOut BaseGetAll<TOut>(Func<SqlConnection, string, TOut> func, string sql)
         {
             return func.Invoke(new SqlConnection(_connectionString), sql);
-        }
-
-        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func, string property)
-        {
-            return BaseGetAll<T, Tout>((connection, sql2) =>
-                func(connection, ($"{sql2} where {property} like  @{property}")));
         }
 
         internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func,
