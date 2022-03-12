@@ -32,6 +32,13 @@ Repo.Search<TableModel>("Name", "%cha%");
 Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
 ```
 
+GetAllByX
+```
+Repo.GetAllByX<TableModel, int>("SomeNumber", 35);
+
+Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
+```
+
 Query single
 ```
 Repo.QuerySingle<TableModel>(
