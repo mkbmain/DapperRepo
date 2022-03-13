@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -8,10 +10,10 @@ namespace Mkb.DapperRepo.Repo
 {
     public class SqlRepo : SqlRepoBase
     {
-        public SqlRepo(string connectionString) : base(connectionString)
+        public SqlRepo(Func<DbConnection> connection) : base(connection)
         {
         }
-        
+
         public virtual T QuerySingle<T>(string sql)
         {
             return BaseGetAll((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2), sql);
@@ -21,8 +23,8 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseGetAll((connection, sql2) => connection.Query<T>(sql2), sql);
         }
-        
-        public virtual IEnumerable<T> GetAllByX<T,PropT>(string property, object term) where T : class, new()
+
+        public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, object term) where T : class, new()
         {
             return Search(SetFieldOf<T, PropT>(new T(), property, term),
                 new SearchCriteria {PropertyName = property, SearchType = SearchType.Equals});
@@ -43,11 +45,12 @@ namespace Mkb.DapperRepo.Repo
             return Search<T>(SetFieldOf<T, string>(new T(), property, term),
                 new SearchCriteria {PropertyName = property, SearchType = SearchType.Like});
         }
-        
+
         public virtual IEnumerable<T> Search<T>(T item, SearchCriteria searchCriteria)
         {
             return Search(item, new[] {searchCriteria});
         }
+
         public virtual IEnumerable<T> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
         {
             return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
@@ -55,12 +58,23 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual T Add<T>(T element)
         {
-            return BaseAdd(new[] {element}, (connection, s) => connection.QuerySingle<T>(s, element), true);
+            BaseAdd(new[] {element}, (connection, s) =>
+            {
+                connection.Query<T>(s, element);
+                return Task.CompletedTask;
+            });
+            var item = GetMatch(element, (connection2, s2) => connection2.Query<T>(s2,  element));
+            return item.LastOrDefault();
         }
 
         public virtual IEnumerable<T> AddMany<T>(IEnumerable<T> elements)
         {
-            return elements.Select(Add).ToList();
+            var list = new List<T>();
+            foreach (var item in elements)
+            {
+                list.Add( Add(item));
+            }
+            return list;
         }
 
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)

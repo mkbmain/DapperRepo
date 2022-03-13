@@ -1,12 +1,21 @@
+using System.Data.SqlClient;
 using Mkb.DapperRepo.Repo;
+using Mkb.DapperRepo.Tests.Utils;
+using MySql.Data.MySqlClient;
 
 namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
 {
     public abstract class BaseSyncTestClass : BaseDbSetupTestClass
     {
-        protected SqlRepo Sut => new SqlRepo(Connection);
+        protected SqlRepo Sut
+        {
+            get
+            {
+                return new SqlRepo(()=> DataBaseScriptRunnerAndBuilder.GetConnection(Connection));
+            }
+        }
 
-        protected BaseSyncTestClass(string dbName) : base(dbName)
+        protected BaseSyncTestClass(string className) : base(className)
         {
         }
     }

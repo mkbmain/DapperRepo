@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace Mkb.DapperRepo.Repo
 {
     public abstract class SqlRepoBase
     {
-        private readonly string _connectionString;
+        private Func<DbConnection> Connection;
 
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
@@ -23,28 +23,41 @@ namespace Mkb.DapperRepo.Repo
             return attribute != null ? ((SqlTableNameAttribute) attribute).Name : type.Name;
         }
 
-        public SqlRepoBase(string connectionString)
+        public SqlRepoBase(Func<DbConnection> connection)
         {
-            _connectionString = connectionString;
+            Connection = connection;
         }
 
-        internal TOut BaseGet<T, TOut>(Func<SqlConnection, string, TOut> func)
+        internal TOut BaseGet<T, TOut>(Func<DbConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
                 func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
-        
-        internal TOut BaseGetAll<T, TOut>(Func<SqlConnection, string, TOut> func)
+
+        protected Tout GetMatch<T, Tout>(T element, Func<DbConnection, string, Tout> func)
+        {
+            var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var wheres = typeof(T).GetProperty(entityPropertyInfo.Id.Name)?.GetValue(element, null) != null
+                ? new[] {$"{entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}"}
+                : entityPropertyInfo.AllNonId
+                    .Select(f => $"{f.Name} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
+                    .ToArray();
+            
+            return BaseGetAll<T, Tout>((connection, s) =>
+                func(connection, $"{s} where {String.Join(" and ", wheres)}"));
+        }
+
+        internal TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func)
         {
             return BaseGetAll(func, $"select * from {GetTableNameFromType(typeof(T))}");
         }
 
-        internal TOut BaseGetAll<TOut>(Func<SqlConnection, string, TOut> func, string sql)
+        internal TOut BaseGetAll<TOut>(Func<DbConnection, string, TOut> func, string sql)
         {
-            return func.Invoke(new SqlConnection(_connectionString), sql);
+            return func.Invoke(Connection(), sql);
         }
 
-        internal Tout BaseSearch<T, Tout>(Func<SqlConnection, string, Tout> func,
+        internal Tout BaseSearch<T, Tout>(Func<DbConnection, string, Tout> func,
             IEnumerable<SearchCriteria> searchCriteria)
         {
             var searches = string.Join(" And ",
@@ -53,23 +66,22 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, Tout>((connection, sql2) => func(connection, ($"{sql2} where  {searches} ")));
         }
 
-        internal TOut BaseAdd<T, TOut>(IEnumerable<T> elements, Func<SqlConnection, string, TOut> action,
-            bool withOutput)
+        internal Task BaseAdd<T>(IEnumerable<T> elements, Func<DbConnection, string, Task> action)
         {
             var propertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var properties = propertyInfo.All
                 .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) != null))
                 .Select(f => f.Name)
                 .ToArray();
-            var output = withOutput ? $"output inserted.*" : "";
-            var sql =
-                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)})  {output} values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
-            return action.Invoke(new SqlConnection(_connectionString), sql);
+            var sql =
+                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)})   values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+
+            return action.Invoke(Connection(), sql);
         }
 
         // we need to return here to ensure if its async it completes the task hence we use func not action
-        internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<SqlConnection, string, Task> func)
+        internal Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<DbConnection, string, Task> func)
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
@@ -78,14 +90,14 @@ namespace Mkb.DapperRepo.Repo
 
             var sql =
                 $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
-            return func.Invoke(new SqlConnection(_connectionString), sql);
+            return func.Invoke(Connection(), sql);
         }
 
-        internal Task BaseDelete<T>(Func<SqlConnection, string, Task> func)
+        internal Task BaseDelete<T>(Func<DbConnection, string, Task> func)
         {
             var delete =
                 $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
-            return func.Invoke(new SqlConnection(_connectionString), delete);
+            return func.Invoke(Connection(), delete);
         }
 
         protected static T SetFieldOf<T, PropT>(T item, string property, object valueToSearchBy)

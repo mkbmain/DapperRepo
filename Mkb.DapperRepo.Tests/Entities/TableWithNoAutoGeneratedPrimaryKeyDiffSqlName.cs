@@ -17,7 +17,7 @@ namespace Mkb.DapperRepo.Tests.Entities
             SomeNumber = item.SomeNumber;
         }
         [PrimaryKey]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
         public int? SomeNumber { get; set; }
