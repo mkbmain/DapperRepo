@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Mkb.DapperRepo.Search;
@@ -57,13 +58,9 @@ namespace Mkb.DapperRepo.Repo
             return BaseAdd(new[] {element}, (connection, s) => connection.QuerySingle<T>(s, element), true);
         }
 
-        public virtual void AddMany<T>(IEnumerable<T> elements)
+        public virtual IEnumerable<T> AddMany<T>(IEnumerable<T> elements)
         {
-            BaseAdd(elements, (connection, s) =>
-            {
-                connection.Execute(s, elements);
-                return Task.CompletedTask;
-            }, false);
+            return elements.Select(Add).ToList();
         }
 
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)

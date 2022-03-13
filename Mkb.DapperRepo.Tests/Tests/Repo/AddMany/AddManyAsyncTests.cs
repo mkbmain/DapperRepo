@@ -74,7 +74,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
                 new TableWithAutoIncrementPrimaryKey {Name = "othername"}
             };
 
-            await Sut.AddMany(testTableItems);
+            testTableItems = (await Sut.AddMany(testTableItems)).ToArray();
 
             var result = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
             var items = result as TableWithAutoIncrementPrimaryKey[] ?? result.ToArray();

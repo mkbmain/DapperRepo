@@ -9,7 +9,7 @@
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
-        <PackageVersion>2.0.0-beta2</PackageVersion>
+        <PackageVersion>2.0.0-beta3</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

@@ -74,7 +74,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
                 new TableWithAutoIncrementPrimaryKey {Name = "othername"}
             };
 
-            Sut.AddMany(testTableItems);
+            testTableItems = Sut.AddMany(testTableItems).ToArray();
 
             var result = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
             var items = result as TableWithAutoIncrementPrimaryKey[] ?? result.ToArray();
@@ -87,7 +87,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
                 x.Id != null && x.SomeNumber == testTableItems.First().SomeNumber &&
                 x.Name == testTableItems.First().Name));
         }
-        
+
         [Test]
         public void Ensure_we_can_add_multiple_records_auto_increment_with_diff_name()
         {
@@ -97,7 +97,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
                 new TableWithAutoIncrementPrimaryKey {Name = "othername"}
             };
 
-            Sut.AddMany(testTableItems.Select(f=> new TableWithAutoIncrementPrimaryKeyDiffSqlName(f)));
+            Sut.AddMany(testTableItems.Select(f => new TableWithAutoIncrementPrimaryKeyDiffSqlName(f)));
 
             var result = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
             var items = result as TableWithAutoIncrementPrimaryKey[] ?? result.ToArray();

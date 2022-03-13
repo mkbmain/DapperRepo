@@ -61,9 +61,14 @@ namespace Mkb.DapperRepo.Repo
                 async (connection, s) => (await connection.QueryAsync<T>(s, element)).First(), true);
         }
 
-        public virtual Task AddMany<T>(IEnumerable<T> elements)
+        public virtual async Task<IEnumerable<T>> AddMany<T>(IEnumerable<T> elements)
         {
-            return BaseAdd<T, Task>(elements, (connection, s) => connection.ExecuteAsync(s, elements), false);
+            var list = new List<T>();
+            foreach (var item in elements)
+            {
+                list.Add(await Add(item));
+            }
+            return list;
         }
 
         public virtual Task Update<T>(T element, bool ignoreNullProperties = false)
