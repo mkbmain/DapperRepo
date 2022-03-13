@@ -1,9 +1,50 @@
 # DapperRepo
 Special Thanks to armanx
 
-Simple dapper repo with async implementation aswell no interface base to build on all work to create the table for Runner
+Simple dapper repo with async implementation.
 
-## creating new entities
+All examples are done with the standard repo but will work with the async version to (will need to be awaited).
+Full examples can be found on the github repo with in the test project.
+
+###warning:
+Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
+The repo its self has no scope over any provider (nor should it). 
+
+####Add:
+note the result back on a add will not be got with in one transaction. 
+Rather we will add the entity then do a separate get to match all properties with in that entity and return the last match.
+This is not optimal and could in certain extreme cases on auto generated primary keys lead to a race condition where the correct entity is not returned but a exact duplicate.
+
+
+I am eager to find a better way to do this original was using "output inserted.*" for MsSql.
+
+
+
+# Example of usage
+
+
+##Initializing a new repo
+```
+  new SqlRepo(()=> new DbConnection());
+  
+  e.g
+  new SqlRepo(()=> new SqlConnection("connection string"));     // MsSql
+  new SqlRepo(()=> new MySqlConnection("connection string"));   // MySql
+  new SqlRepo(()=> new NpgsqlConnection("connection string"));  // PostgreSQL
+  
+```
+by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data. 
+Regardless of the db tech.
+
+###currently supported and tested for and where to find the implementation
+```
+  DbConnection            nuget package
+  SqlConnection         System.Data.SqlClient
+  MySqlConnection          MySql.Data
+  NpgsqlConnection           Npgsql
+```
+
+## creating entities
 please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
 ```
