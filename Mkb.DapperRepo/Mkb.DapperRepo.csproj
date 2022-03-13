@@ -9,12 +9,12 @@
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
-        <PackageVersion>2.0.0-beta</PackageVersion>
+        <PackageVersion>2.0.0-beta2</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.0.78" />
-      <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+      <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     </ItemGroup>
 
 </Project>
