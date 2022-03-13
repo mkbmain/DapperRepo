@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using Dapper;
-using Mkb.DapperRepo.Repo;
 using Mkb.DapperRepo.Tests.Entities;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace Mkb.DapperRepo.Tests.Utils
 {
@@ -29,25 +28,28 @@ namespace Mkb.DapperRepo.Tests.Utils
             ExecuteCommandNonQuery(connection, sql);
         }
 
-        public static void RunDb(string connectionToMaster, string dbName, string scriptLocation)
-        {
-            var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", dbName);
-            foreach (var item in sql.Split("{WaitBlock}"))
-            {
-                // this might be come a bottlekneck as we create a new connection for every command but hay its tests should not be doing anything massive
-                ExecuteCommandNonQuery(connectionToMaster, item);
-            }
-        }
+
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
             string start = Connection.SelectedEnvironment == Enviroment.Sql
                 ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
                 : "";
-            ExecuteCommandNonQuery(connectionToMaster, $"{start}{Environment.NewLine}DROP DATABASE {dbName}");
+            if (Connection.SelectedEnvironment != Enviroment.PostgreSQL)
+            {
+                ExecuteCommandNonQuery(connectionToMaster, $"{start}{Environment.NewLine}DROP DATABASE {dbName}");
+                return;
+            }
+          
+            ExecuteCommandNonQuery(connectionToMaster,$"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
+            ExecuteCommandNonQuery(connectionToMaster,@$"SELECT pg_terminate_backend(pg_stat_activity.pid)
+            FROM pg_stat_activity
+            WHERE pg_stat_activity.datname = '{dbName}';");
+            ExecuteCommandNonQuery(connectionToMaster, $"DROP DATABASE {dbName};");
+
         }
 
-        private static void ExecuteCommandNonQuery(string connection, string sql)
+        public static void ExecuteCommandNonQuery(string connection, string sql)
         {
             using var conn = GetConnection(connection);
             conn.Open();
@@ -60,6 +62,8 @@ namespace Mkb.DapperRepo.Tests.Utils
             {
                 case Enviroment.MySql:
                     return new MySqlConnection(connection);
+                case Enviroment.PostgreSQL:
+                    return new NpgsqlConnection(connection);
                 case Enviroment.Sql:
                 default:
                     return new SqlConnection(connection);

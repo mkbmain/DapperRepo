@@ -10,7 +10,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
 {
     public class AddManyAsyncTests : BaseAsyncTestClass
     {
-        public AddManyAsyncTests() : base($"{nameof(AddManyAsyncTests)}{RandomChars}")
+        public AddManyAsyncTests() : base($"{nameof(AddManyAsyncTests)}")
         {
         }
 

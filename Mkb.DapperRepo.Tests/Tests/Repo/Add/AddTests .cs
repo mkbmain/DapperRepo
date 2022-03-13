@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
 {
     public class AddTests : BaseSyncTestClass
     {
-        public AddTests() : base($"{nameof(AddTests)}{RandomChars}")
+        public AddTests() : base($"{nameof(AddTests)}")
         {
         }
 

@@ -11,7 +11,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetAll
 {
     public class GetAllAsyncTests : BaseAsyncTestClass
     {
-        public GetAllAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}{RandomChars}")
+        public GetAllAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}")
         {
         }
         

@@ -14,7 +14,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
             }
         }
 
-        protected BaseAsyncTestClass(string dbName) : base(dbName)
+        protected BaseAsyncTestClass(string className) : base(className)
         {
         }
     }

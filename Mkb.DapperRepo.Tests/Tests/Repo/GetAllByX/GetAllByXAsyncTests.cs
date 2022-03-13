@@ -10,7 +10,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetAllByX
 {
     public class GetAllByXAsyncTests : BaseAsyncTestClass
     {
-        public GetAllByXAsyncTests() : base($"{nameof(GetAllByXAsyncTests)}{RandomChars}")
+        public GetAllByXAsyncTests() : base($"{nameof(GetAllByXAsyncTests)}")
         {
         }
 

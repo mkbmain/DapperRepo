@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Delete
 {
     public class DeleteTests : BaseSyncTestClass
     {
-        public DeleteTests() : base( $"{nameof(DeleteTests)}{RandomChars}")
+        public DeleteTests() : base( $"{nameof(DeleteTests)}")
         {
         }
         

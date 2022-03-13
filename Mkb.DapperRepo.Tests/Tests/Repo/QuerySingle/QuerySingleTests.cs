@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.QuerySingle
 {
     public class QuerySingleTests : BaseSyncTestClass
     {
-        public QuerySingleTests() : base($"{nameof(QuerySingleTests)}{RandomChars}")
+        public QuerySingleTests() : base($"{nameof(QuerySingleTests)}")
         {
         }
 

@@ -10,7 +10,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.QueryMany
 {
     public class QueryManyAsyncTests : BaseAsyncTestClass
     {
-        public QueryManyAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}{RandomChars}")
+        public QueryManyAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}")
         {
         }
         

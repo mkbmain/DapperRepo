@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetById
 {
     public class GetByIdTests : BaseSyncTestClass
     {
-        public GetByIdTests() : base($"{nameof(GetByIdTests)}{RandomChars}")
+        public GetByIdTests() : base($"{nameof(GetByIdTests)}")
         {
         }
 
