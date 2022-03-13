@@ -19,7 +19,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
         [SetUp]
         public void Setup()
         {
-            DataBaseScriptRunnerAndBuilder.RunDb(DapperRepo.Tests.Connection.MasterConnectionString, DbName, PathBuilder.BuildSqlScriptLocation("CreateDbWithTestTable.Sql"));
+            DataBaseScriptRunnerAndBuilder.RunDb(DapperRepo.Tests.Connection.MasterConnectionString, DbName, PathBuilder.BuildSqlScriptLocation($"CreateDbWithTestTable.{ DapperRepo.Tests.Connection.SelectedEnvironment.ToString()}"));
         }
 
         [TearDown]

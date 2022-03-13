@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -8,10 +10,10 @@ namespace Mkb.DapperRepo.Repo
 {
     public class SqlRepoAsync : SqlRepoBase
     {
-        public SqlRepoAsync(string connectionString) : base(connectionString)
+        public SqlRepoAsync(Func<DbConnection> connection) : base(connection)
         {
         }
-
+        
         public virtual Task<T> QuerySingle<T>(string sql)
         {
             return BaseGetAll((connection, sql2) => connection.QueryFirstOrDefaultAsync<T>(sql2), sql);
@@ -55,10 +57,12 @@ namespace Mkb.DapperRepo.Repo
                 searchCriteria);
         }
 
-        public virtual Task<T> Add<T>(T element)
+        public virtual async Task<T> Add<T>(T element)
         {
-            return BaseAdd(new[] {element},
-                async (connection, s) => (await connection.QueryAsync<T>(s, element)).First(), true);
+            await BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
+            var item = await GetMatch(element, (connection2, s2) => 
+                connection2.QueryAsync<T>(s2, element));
+            return item.LastOrDefault();
         }
 
         public virtual async Task<IEnumerable<T>> AddMany<T>(IEnumerable<T> elements)

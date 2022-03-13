@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MySql.Data" Version="8.0.28" />
         <PackageReference Include="NUnit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
@@ -28,6 +29,12 @@
 	
 	 <ItemGroup>
 	   <Folder Include="Tests\Repo" />
+	 </ItemGroup>
+	
+	 <ItemGroup>
+	   <None Update="SqlScripts\CreateDbWithTestTable.MySql">
+	     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	   </None>
 	 </ItemGroup>
 
 </Project>
