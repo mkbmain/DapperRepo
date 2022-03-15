@@ -84,9 +84,9 @@ Repo.Search<TableModel>("Name", "%cha%");
 
 Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
 
-and search multiple 
+and search multiple criteria
 
- Sut.Search(new TableModel
+ Repo.Search(new TableModel
             {
                 Name = "%hae%",
                 SomeNumber = 9
@@ -150,7 +150,7 @@ Repo.Delete(item);
 Add
 ```
  var testTableItem = new TableModel() {Name = "Michael", SomeNumber = 44};
- var resultBack = Sut.Add(testTableItem);
+ var resultBack = Repo.Add(testTableItem);
 ```
 
 Update
@@ -160,14 +160,14 @@ Update
  var item = Repo.GetById(new TableModel {Id =  325});
  item.Name = "mike"
  item.Email = null
- Sut.Update(testTableItem); // will update properites and also null properties so db will set email to null
+ Repo.Update(testTableItem); // will update properites and also null properties so db will set email to null
 
  // Example 2
  var item = Repo.GetById(new TableModel {Id =  325});
  item.Name = "mike"
  item.Email = null
  
- Sut.Update(testTableItem, true);   // will ignore null properties and only update name in db
+ Repo.Update(testTableItem, true);   // will ignore null properties and only update name in db
 ```
 
 
