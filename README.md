@@ -12,6 +12,8 @@ Simple dapper repo with async implementation.
 | PostgreSQL | NpgsqlConnection | Npgsql                |
 | Sqlite     | SqliteConnection | Microsoft.Data.Sqlite |
 
+It may work for others. <br>
+(sql lite I recently added, I made no changes to the repo just added test setup to confirm it worked).
 
 ### warning:
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
