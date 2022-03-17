@@ -3,8 +3,15 @@ Special Thanks to armanx
 
 Simple dapper repo with async implementation.
 
-All examples are done with the standard repo but will work with the async version to (will need to be awaited).
-Full examples can be found on the github repo with in the test project.
+
+## Currently supported and tested for these providers
+
+| Db Connection    	| Nuget Package         	|
+|------------------	|-----------------------	|
+| SqlConnection    	| System.Data.SqlClient 	|
+| MySqlConnection  	| MySql.Data            	|
+| NpgsqlConnection 	| Npgsql                	|
+
 
 ### warning:
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
@@ -22,6 +29,8 @@ I am eager to find a better way to do this original was using "output inserted.*
 
 # Setup
 
+All examples are done with the standard repo but will work with the async version to (will need to be awaited).
+Full examples can be found on the github repo with in the test project.
 
 ## Initializing a new repo
 ```
@@ -46,15 +55,6 @@ or ofcourse via DI
 ```
 by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data. 
 Regardless of the db tech.
-
-## Currently supported and tested for these providers
-
-| Db Connection    	| Nuget Package         	|
-|------------------	|-----------------------	|
-| SqlConnection    	| System.Data.SqlClient 	|
-| MySqlConnection  	| MySql.Data            	|
-| NpgsqlConnection 	| Npgsql                	|
-
 
 
 
