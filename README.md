@@ -1,5 +1,4 @@
 # DapperRepo
-Special Thanks to armanx
 
 Simple dapper repo with async implementation.
 
@@ -181,5 +180,9 @@ also please note there are separate getall and insert methods that are raw in  D
 
 
 
-Located in CreateDbWithTestTable.Sql you will find the create database scripts
+Located in CreateDbWithTestTable.Sql you will find the create database scripts.
 
+
+
+
+Special Thanks to armanx
