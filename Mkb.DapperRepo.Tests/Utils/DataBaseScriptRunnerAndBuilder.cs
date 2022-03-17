@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
+using Microsoft.Data.Sqlite;
 using Mkb.DapperRepo.Tests.Entities;
 using MySql.Data.MySqlClient;
 using Npgsql;
@@ -32,6 +33,13 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
+            if (Connection.SelectedEnvironment == Enviroment.Sqlite)
+            {
+                // this does not appear to work but rebuild solves it so meh
+                var path = System.IO.Path.Combine(Environment.CurrentDirectory, dbName);
+                System.IO.File.Delete( path);
+                return;
+            }
             string start = Connection.SelectedEnvironment == Enviroment.Sql
                 ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
                 : "";
@@ -51,6 +59,7 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static void ExecuteCommandNonQuery(string connection, string sql)
         {
+            if(string.IsNullOrWhiteSpace(sql)){return;}
             using var conn = GetConnection(connection);
             conn.Open();
             conn.Execute(sql);
@@ -64,6 +73,8 @@ namespace Mkb.DapperRepo.Tests.Utils
                     return new MySqlConnection(connection);
                 case Enviroment.PostgreSQL:
                     return new NpgsqlConnection(connection);
+                case Enviroment.Sqlite:
+                    return new  SqliteConnection(connection);
                 case Enviroment.Sql:
                 default:
                     return new SqlConnection(connection);
