@@ -5,11 +5,12 @@ Simple dapper repo with async implementation.
 
 ## Currently supported and tested for these providers
 
-| Db Connection    	| Nuget Package         	|
-|------------------	|-----------------------	|
-| SqlConnection    	| System.Data.SqlClient 	|
-| MySqlConnection  	| MySql.Data            	|
-| NpgsqlConnection 	| Npgsql                	|
+| Provider   | Db Connection    | Nuget Package         |
+|------------|------------------|-----------------------|
+| Sql        | SqlConnection    | System.Data.SqlClient |
+| MySql      | MySqlConnection  | MySql.Data            |
+| PostgreSQL | NpgsqlConnection | Npgsql                |
+| Sqlite     | SqliteConnection | Microsoft.Data.Sqlite |
 
 
 ### warning:
@@ -39,8 +40,9 @@ Full examples can be found on the github repo with in the test project.
   new SqlRepo(()=> new SqlConnection("connection string"));     // MsSql
   new SqlRepo(()=> new MySqlConnection("connection string"));   // MySql
   new SqlRepo(()=> new NpgsqlConnection("connection string"));  // PostgreSQL
+  new SqlRepo(()=> new SqliteConnection("connection string"));  // Sqlite
   ```
-or ofcourse via DI
+or of course via DI
 ```
   
   // or where ever you want to get the connection string from it from
