@@ -40,7 +40,7 @@
 	   <None Update="SqlScripts\CreateDbWithTestTable.PostgreSQL">
 	     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	   </None>
-	   <None Update="SqlScripts\CreateDbWithTestTable.SqlLite">
+	   <None Update="SqlScripts\CreateDbWithTestTable.Sqlite">
 	     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	   </None>
 	 </ItemGroup>
