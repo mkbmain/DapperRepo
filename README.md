@@ -20,7 +20,7 @@ I am eager to find a better way to do this original was using "output inserted.*
 
 
 
-# Example of usage
+# Setup
 
 
 ## Initializing a new repo
@@ -47,16 +47,20 @@ or ofcourse via DI
 by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data. 
 Regardless of the db tech.
 
-## currently supported and tested for and where to find the implementation
-```
-  DbConnection            nuget package
-  SqlConnection         System.Data.SqlClient
-  MySqlConnection          MySql.Data
-  NpgsqlConnection           Npgsql
-```
+## Currently supported and tested for these providers
+
+| Db Connection    	| Nuget Package         	|
+|------------------	|-----------------------	|
+| SqlConnection    	| System.Data.SqlClient 	|
+| MySqlConnection  	| MySql.Data            	|
+| NpgsqlConnection 	| Npgsql                	|
 
 
-## creating entities
+
+
+# Usages
+
+## Creating entities
 please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
 ```
@@ -74,11 +78,7 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
     }
 ```
 
-
-## Usages
-
-
-Search
+## Search
 ```
 Repo.Search<TableModel>("Name", "%cha%"); 
 
@@ -109,51 +109,51 @@ and search multiple criteria
             
 ```
 
-GetAllByX
+## GetAllByX
 ```
 Repo.GetAllByX<TableModel, int>("SomeNumber", 35);
 
 Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
 ```
 
-Query single
+## Query single
 ```
 Repo.QuerySingle<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
 ```
 
 
-Query Multiple
+## Query Multiple
 ```
 Repo.QueryMany<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
 ```
 
-Get By Id
+## Get By Id
 ```
 Repo.GetById(new TableWithGuid {Id =  Guid.Parse("....")});
 Repo.GetById(new TableWithInt {Id =  325});
 ```
 
-Get All
+## Get All
 ```
 Repo.GetAll<TableModel>().ToArray();
 ```
 
-Delete
+## Delete
 ```
 var item =Repo.GetById(new TableModel {Id =  325});
 Repo.Delete(item);
 ```
 
 
-Add
+## Add
 ```
  var testTableItem = new TableModel() {Name = "Michael", SomeNumber = 44};
  var resultBack = Repo.Add(testTableItem);
 ```
 
-Update
+## Update
 ```
  update command is built from the primary get so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
 
@@ -171,7 +171,7 @@ Update
 ```
 
 
-## Getting Tests working
+### Getting Tests working
 Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
 ```
    public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
