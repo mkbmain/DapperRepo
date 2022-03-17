@@ -33,7 +33,7 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
-            if (Connection.SelectedEnvironment == Enviroment.SqlLite)
+            if (Connection.SelectedEnvironment == Enviroment.Sqlite)
             {
                 // this does not appear to work but rebuild solves it so meh
                 var path = System.IO.Path.Combine(Environment.CurrentDirectory, dbName);
@@ -73,7 +73,7 @@ namespace Mkb.DapperRepo.Tests.Utils
                     return new MySqlConnection(connection);
                 case Enviroment.PostgreSQL:
                     return new NpgsqlConnection(connection);
-                case Enviroment.SqlLite:
+                case Enviroment.Sqlite:
                     return new  SqliteConnection(connection);
                 case Enviroment.Sql:
                 default:

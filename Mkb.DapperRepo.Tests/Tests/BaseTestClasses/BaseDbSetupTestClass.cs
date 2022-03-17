@@ -27,7 +27,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
             var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", DbName);
             bool first = true;
 
-            if (DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.SqlLite)
+            if (DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.Sqlite)
             {
                 File.WriteAllBytes(Connection, new byte[0]);
             }

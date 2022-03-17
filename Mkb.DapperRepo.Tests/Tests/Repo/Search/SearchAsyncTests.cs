@@ -41,7 +41,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Search
         public async Task Ensure_we_ignore_case_on_property()
         {
             if (DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.PostgreSQL ||
-                DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.SqlLite )
+                DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.Sqlite )
             {
                 // postgres is case sensitive this will fail
                 return;
