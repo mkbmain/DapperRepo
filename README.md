@@ -1,7 +1,7 @@
 # DapperRepo
 
 Simple dapper repo with async implementation.
-
+<br>designed to generate simple crud operations while still being lite weight
 
 ## Currently supported and tested for these providers
 
