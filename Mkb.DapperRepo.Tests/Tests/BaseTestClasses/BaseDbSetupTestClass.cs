@@ -7,9 +7,9 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
 {
     public abstract class BaseDbSetupTestClass
     {
-        public BaseDbSetupTestClass(string className)
+        public BaseDbSetupTestClass()
         {
-            ClassName = className.ToLower();
+            ClassName = this.GetType().Name;
         }
 
         private static string RandomChars => Guid.NewGuid().ToString("N").Substring(0, 6);
@@ -21,7 +21,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
         [SetUp]
         public void Setup()
         {
-            DbName = ClassName + RandomChars;
+            DbName = (ClassName + RandomChars).ToLower();
             var scriptLocation = PathBuilder.BuildSqlScriptLocation($"CreateDbWithTestTable.{DapperRepo.Tests.Connection.SelectedEnvironment.ToString()}");
             
             var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", DbName);

@@ -9,10 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Update
 {
     public class UpdateTests : BaseSyncTestClass
     {
-        public UpdateTests() : base($"{nameof(UpdateTests)}")
-        {
-        }
-
         [Test]
         public void Ensure_we_can_update_a_record()
         {

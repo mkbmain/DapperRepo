@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Delete
 {
     public class DeleteAsyncTest : BaseAsyncTestClass
     {
-        public DeleteAsyncTest() : base($"{nameof(DeleteAsyncTest)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_can_Delete_a_record()
         {

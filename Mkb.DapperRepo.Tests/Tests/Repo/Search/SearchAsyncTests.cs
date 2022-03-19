@@ -11,10 +11,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Search
 {
     public class SearchAsyncTests : BaseAsyncTestClass
     {
-        public SearchAsyncTests() : base($"{nameof(SearchAsyncTests)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_can_match_exact()
         {

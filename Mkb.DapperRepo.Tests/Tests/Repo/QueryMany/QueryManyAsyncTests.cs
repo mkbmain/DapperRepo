@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.QueryMany
 {
     public class QueryManyAsyncTests : BaseAsyncTestClass
     {
-        public QueryManyAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}")
-        {
-        }
-        
         [Test]
         public async Task Ensure_we_Get_correct_record_back()
         {

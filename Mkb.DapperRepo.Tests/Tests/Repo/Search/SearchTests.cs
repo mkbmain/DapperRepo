@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Search
 {
     public class SearchTests : BaseSyncTestClass
     {
-        public SearchTests() : base($"{nameof(SearchTests)}")
-        {
-        }
-
         [Test]
         public void Ensure_we_can_match_exact()
         {

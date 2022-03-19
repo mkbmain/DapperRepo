@@ -11,10 +11,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetAll
 {
     public class GetAllAsyncTests : BaseAsyncTestClass
     {
-        public GetAllAsyncTests() : base( $"{nameof(QueryManyAsyncTests)}")
-        {
-        }
-        
         [Test]
         public async Task Ensure_we_get_all_records_back()
         {
