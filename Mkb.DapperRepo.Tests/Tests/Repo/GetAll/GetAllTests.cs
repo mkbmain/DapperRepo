@@ -9,10 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetAll
 {
     public class GetAllTests : BaseSyncTestClass
     {
-        public GetAllTests() : base($"{nameof(GetAllTests)}")
-        {
-        }
-
         [Test]
         public void Ensure_we_get_all_records_back()
         {

@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.QuerySingle
 {
     public class QuerySingleAsyncTests : BaseAsyncTestClass
     {
-        public QuerySingleAsyncTests() : base($"{nameof(QuerySingleAsyncTests)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_Get_correct_record_back()
         {

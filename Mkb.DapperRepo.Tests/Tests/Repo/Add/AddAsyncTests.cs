@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
 {
     public class AddAsyncTests : BaseAsyncTestClass
     {
-        public AddAsyncTests() : base($"{nameof(AddAsyncTests)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_can_add()
         {

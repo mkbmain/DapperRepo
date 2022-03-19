@@ -14,9 +14,6 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
                 return new SqlRepo(()=> DataBaseScriptRunnerAndBuilder.GetConnection(Connection));
             }
         }
-
-        protected BaseSyncTestClass(string className) : base(className)
-        {
-        }
+        
     }
 }
