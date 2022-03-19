@@ -62,14 +62,6 @@ namespace Mkb.DapperRepo.Repo
             await BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
         }
 
-        public virtual async Task AddMany<T>(IEnumerable<T> elements)
-        {
-            foreach (var item in elements)
-            {
-                await Add(item);
-            }
-        }
-
         public virtual Task Update<T>(T element, bool ignoreNullProperties = false)
         {
             return BaseUpdate(element, ignoreNullProperties,

@@ -65,14 +65,6 @@ namespace Mkb.DapperRepo.Repo
             });
         }
 
-        public virtual void AddMany<T>(IEnumerable<T> elements)
-        {
-            foreach (var item in elements)
-            {
-                Add(item);
-            }
-        }
-
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)
         {
             BaseUpdate(element, ignoreNullProperties, (connection, s) =>
