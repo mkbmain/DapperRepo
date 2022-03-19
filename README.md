@@ -20,11 +20,12 @@ The repo its self has no scope over any provider (nor should it).
 
 ## warning on Add:
 note the result back on a add will not be got with in one transaction. 
-Rather we will add the entity then do a separate get to match all properties with in that entity and return the last match.
+Rather it will add the entity then do a separate get to match all properties with in that entity and return the last match.
 This is not optimal and could in certain extreme cases on auto generated primary keys lead to a race condition where the correct entity is not returned but a exact duplicate.
 
 Please also note precision plays a big role for datetimes and decimals etc..
 
+e.g
 ```
 on add
 0.32467 only getting saved to a decimal(4,2) << will not return on add due to dapper mapping to be exactly .32467 where db will just be 0.32
@@ -185,7 +186,7 @@ Connection.cs contains connection config these are not unit tests they do requir
    public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
 ```
 
-also please note there are separate getall and insert methods that are raw in  DataBaseScriptRunnerAndBuilder.cs as we don't use the implemenation we are testing for setups or verifies.
+also please note there are separate getall and insert methods that are raw in  DataBaseScriptRunnerAndBuilder.cs as the tests don't use the implemenation they are are testing for setups or verifies.
 
 
 
