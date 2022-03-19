@@ -9,10 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.QuerySingle
 {
     public class QuerySingleTests : BaseSyncTestClass
     {
-        public QuerySingleTests() : base($"{nameof(QuerySingleTests)}")
-        {
-        }
-
         [Test]
         public void Ensure_we_Get_correct_record_back()
         {

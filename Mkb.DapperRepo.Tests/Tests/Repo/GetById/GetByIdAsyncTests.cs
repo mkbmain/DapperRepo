@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetById
 {
     public class GetByIdAsyncTest : BaseAsyncTestClass
     {
-        public GetByIdAsyncTest() : base($"{nameof(GetByIdAsyncTest)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_Can_Get_correct_record_Back()
         {

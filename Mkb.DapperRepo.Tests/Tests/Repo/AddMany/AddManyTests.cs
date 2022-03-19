@@ -9,11 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.AddMany
 {
     public class AddManyTests : BaseSyncTestClass
     {
-        public AddManyTests() : base($"{nameof(AddManyTests)}")
-        {
-        }
-
-
         [Test]
         public void Ensure_we_can_add_multiple_records()
         {

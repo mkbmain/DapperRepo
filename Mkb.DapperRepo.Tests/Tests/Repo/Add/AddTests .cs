@@ -9,10 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
 {
     public class AddTests : BaseSyncTestClass
     {
-        public AddTests() : base($"{nameof(AddTests)}")
-        {
-        }
-
         [Test]
         public void Ensure_we_can_add()
         {

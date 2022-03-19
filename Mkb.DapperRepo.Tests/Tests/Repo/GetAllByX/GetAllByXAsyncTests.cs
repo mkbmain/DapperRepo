@@ -10,10 +10,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.GetAllByX
 {
     public class GetAllByXAsyncTests : BaseAsyncTestClass
     {
-        public GetAllByXAsyncTests() : base($"{nameof(GetAllByXAsyncTests)}")
-        {
-        }
-
         [Test]
         public async Task Ensure_we_can_match_exact()
         {

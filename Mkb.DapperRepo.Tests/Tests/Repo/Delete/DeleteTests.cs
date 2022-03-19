@@ -9,11 +9,6 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Delete
 {
     public class DeleteTests : BaseSyncTestClass
     {
-        public DeleteTests() : base( $"{nameof(DeleteTests)}")
-        {
-        }
-        
-
         [Test]
         public void Ensure_we_can_Delete_a_record()
         {
