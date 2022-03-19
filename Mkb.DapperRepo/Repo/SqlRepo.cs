@@ -39,7 +39,13 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseGetAll<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s));
         }
-
+        
+        public virtual IEnumerable<T> GetExactMatches<T>(T item, bool ignoreNulls)
+        {
+            return BaseGetExactMatches(item, (connection2, s2) =>
+                connection2.Query<T>(s2, item), ignoreNulls);
+        }
+        
         public virtual IEnumerable<T> Search<T>(string property, string term) where T : class, new()
         {
             return Search<T>(SetFieldOf<T, string>(new T(), property, term),

@@ -40,6 +40,12 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, Task<IEnumerable<T>>>((connection, s) => (connection.QueryAsync<T>(s)));
         }
 
+        public virtual Task<IEnumerable<T>> GetExactMatches<T>(T item, bool ignoreNulls)
+        {
+            return BaseGetExactMatches(item, (connection2, s2) =>
+                connection2.QueryAsync<T>(s2, item), ignoreNulls);
+        }
+
         public virtual Task<IEnumerable<T>> Search<T>(string property, string term) where T : class, new()
         {
             return Search(SetFieldOf<T, string>(new T(), property, term),
