@@ -15,17 +15,22 @@ Simple dapper repo with async implementation.
 It may work for others. <br>
 (sql lite I recently added, I made no changes to the repo just added test setup to confirm it worked).
 
-### warning:
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
 The repo its self has no scope over any provider (nor should it). 
 
-### warning on Add:
+## warning on Add:
 note the result back on a add will not be got with in one transaction. 
 Rather we will add the entity then do a separate get to match all properties with in that entity and return the last match.
 This is not optimal and could in certain extreme cases on auto generated primary keys lead to a race condition where the correct entity is not returned but a exact duplicate.
 
+Please also note precision plays a big role for datetimes and decimals etc..
 
-I am eager to find a better way to do this original was using "output inserted.*" for MsSql.
+```
+on add
+0.32467 only getting saved to a decimal(4,2) << will not return on add due to dapper mapping to be exactly .32467 where db will just be 0.32
+```
+
+I am eager to find a better way to do this original was using "output inserted.*" for MsSql but not compatible with other suppliers.
 
 
 
