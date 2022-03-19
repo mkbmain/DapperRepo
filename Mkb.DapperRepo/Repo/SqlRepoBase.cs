@@ -34,18 +34,6 @@ namespace Mkb.DapperRepo.Repo
                 func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
 
-        protected Tout GetMatch<T, Tout>(T element, Func<DbConnection, string, Tout> func)
-        {
-            var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
-            var wheres = typeof(T).GetProperty(entityPropertyInfo.Id.Name)?.GetValue(element, null) != null
-                ? new[] {$"{entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}"}
-                : entityPropertyInfo.AllNonId
-                    .Select(f => $"{f.Name} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
-                    .ToArray();
-            
-            return BaseGetAll<T, Tout>((connection, s) =>
-                func(connection, $"{s} where {String.Join(" and ", wheres)}"));
-        }
 
         internal TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func)
         {

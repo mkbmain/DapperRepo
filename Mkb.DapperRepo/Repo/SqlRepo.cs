@@ -56,25 +56,21 @@ namespace Mkb.DapperRepo.Repo
             return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
         }
 
-        public virtual T Add<T>(T element)
+        public virtual void Add<T>(T element)
         {
             BaseAdd(new[] {element}, (connection, s) =>
             {
                 connection.Query<T>(s, element);
                 return Task.CompletedTask;
             });
-            var item = GetMatch(element, (connection2, s2) => connection2.Query<T>(s2,  element));
-            return item.LastOrDefault();
         }
 
-        public virtual IEnumerable<T> AddMany<T>(IEnumerable<T> elements)
+        public virtual void AddMany<T>(IEnumerable<T> elements)
         {
-            var list = new List<T>();
             foreach (var item in elements)
             {
-                list.Add( Add(item));
+                Add(item);
             }
-            return list;
         }
 
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)

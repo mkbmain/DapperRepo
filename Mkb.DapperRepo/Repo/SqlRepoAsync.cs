@@ -57,22 +57,17 @@ namespace Mkb.DapperRepo.Repo
                 searchCriteria);
         }
 
-        public virtual async Task<T> Add<T>(T element)
+        public virtual async Task Add<T>(T element)
         {
             await BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
-            var item = await GetMatch(element, (connection2, s2) => 
-                connection2.QueryAsync<T>(s2, element));
-            return item.LastOrDefault();
         }
 
-        public virtual async Task<IEnumerable<T>> AddMany<T>(IEnumerable<T> elements)
+        public virtual async Task AddMany<T>(IEnumerable<T> elements)
         {
-            var list = new List<T>();
             foreach (var item in elements)
             {
-                list.Add(await Add(item));
+                await Add(item);
             }
-            return list;
         }
 
         public virtual Task Update<T>(T element, bool ignoreNullProperties = false)
