@@ -124,8 +124,8 @@ Repo.QueryMany<TableModel>(
 
 ## Get By Id
 ```
-Repo.GetById(new TableWithGuid {Id =  Guid.Parse("....")});
-Repo.GetById(new TableWithInt {Id =  325});
+Repo.GetById(new TableModel {Id = Guid.Parse("....")});
+Repo.GetById(new TableModelWithIntId {Id =  325});
 ```
 
 ## Get All
@@ -133,9 +133,20 @@ Repo.GetById(new TableWithInt {Id =  325});
 Repo.GetAll<TableModel>().ToArray();
 ```
 
+## GetExactMatches
+Know details of a Entity but not its id (like one you have just added)
+
+```
+  // false as 2nd param indicates to not to ignore nulls i.e some number has to be null for its model to be returned
+  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, false); 
+  
+  // true as 2nd param indicates to ignore nulls i.e some number can be anything in this case
+  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, true); 
+```
+
 ## Delete
 ```
-var item =Repo.GetById(new TableModel {Id =  325});
+var item =Repo.GetById(new TableModel {Id = Guid.Parse("....")});
 Repo.Delete(item);
 ```
 
@@ -150,13 +161,13 @@ Repo.Delete(item);
 ```
  update command is built from the primary get so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
 
- var item = Repo.GetById(new TableModel {Id =  325});
+ var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
  item.Name = "mike"
  item.Email = null
  Repo.Update(testTableItem); // will update properites and also null properties so db will set email to null
 
  // Example 2
- var item = Repo.GetById(new TableModel {Id =  325});
+ var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
  item.Name = "mike"
  item.Email = null
  
