@@ -40,6 +40,12 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, Task<IEnumerable<T>>>((connection, s) => (connection.QueryAsync<T>(s)));
         }
 
+        public virtual Task<IEnumerable<T>> GetExactMatches<T>(T item, bool ignoreNulls)
+        {
+            return BaseGetExactMatches(item, (connection2, s2) =>
+                connection2.QueryAsync<T>(s2, item), ignoreNulls);
+        }
+
         public virtual Task<IEnumerable<T>> Search<T>(string property, string term) where T : class, new()
         {
             return Search(SetFieldOf<T, string>(new T(), property, term),
@@ -57,22 +63,9 @@ namespace Mkb.DapperRepo.Repo
                 searchCriteria);
         }
 
-        public virtual async Task<T> Add<T>(T element)
+        public virtual async Task Add<T>(T element)
         {
             await BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
-            var item = await GetMatch(element, (connection2, s2) => 
-                connection2.QueryAsync<T>(s2, element));
-            return item.LastOrDefault();
-        }
-
-        public virtual async Task<IEnumerable<T>> AddMany<T>(IEnumerable<T> elements)
-        {
-            var list = new List<T>();
-            foreach (var item in elements)
-            {
-                list.Add(await Add(item));
-            }
-            return list;
         }
 
         public virtual Task Update<T>(T element, bool ignoreNullProperties = false)
