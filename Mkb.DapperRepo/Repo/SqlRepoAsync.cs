@@ -63,9 +63,9 @@ namespace Mkb.DapperRepo.Repo
                 searchCriteria);
         }
 
-        public virtual async Task Add<T>(T element)
+        public virtual Task Add<T>(T element)
         {
-            await BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
+            return BaseAdd(new[] {element}, async (connection, s) => { await connection.QueryAsync<T>(s, element); });
         }
 
         public virtual Task Update<T>(T element, bool ignoreNullProperties = false)
