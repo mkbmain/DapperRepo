@@ -68,7 +68,7 @@ namespace Mkb.DapperRepo.Repo
                 .ToArray();
 
             var sql =
-                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)})   values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(Connection(), sql);
         }
