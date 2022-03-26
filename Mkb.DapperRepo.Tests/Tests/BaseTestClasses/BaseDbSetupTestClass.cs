@@ -27,10 +27,6 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
             var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", DbName);
             bool first = true;
 
-            if (DapperRepo.Tests.Connection.SelectedEnvironment == Enviroment.Sqlite)
-            {
-                File.WriteAllBytes(Connection, new byte[0]);
-            }
             foreach (var item in sql.Split("{WaitBlock}"))
             {
                 // this might be come a bottlekneck as we create a new connection for every command but hay its tests should not be doing anything massive
