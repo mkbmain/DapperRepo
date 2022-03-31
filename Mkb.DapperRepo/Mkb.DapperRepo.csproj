@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <Title>Mkb.DapperRepo</Title>
         <Authors>Mkb</Authors>
-        <Description>Basic repo for dapper Readme contains uses. details on https://github.com/mkbmain/DapperRepo </Description>
+        <Description>Basic repo for dapper works with MySql,Sqlite,Postgres, Microsoft Sql .. + others. Readme contains uses. details on https://github.com/mkbmain/DapperRepo </Description>
         <Copyright>Mkb</Copyright>
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
