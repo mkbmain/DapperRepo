@@ -43,7 +43,7 @@ or of course via DI
   
   services.Configure<ConnectionStrings>(Configuration.GetSection(nameof(ConnectionStrings)));
   services.AddTransient(r => new SqlConnection(r.GetService<IOptions<ConnectionStrings>>().Value.SqlDb));
-  services.AddScoped(r => new SqlRepoAsync(r.GetService<SqlConnection>));
+  services.AddScoped(r => new SqlRepoAsync(()=>r.GetService<SqlConnection>));
   
 ```
 by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data. 
