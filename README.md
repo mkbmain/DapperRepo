@@ -158,8 +158,8 @@ Repo.Delete(item);
 ```
 
 ## Update
+ update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
 ```
- update command is built from the primary get so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
 
  var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
  item.Name = "mike"
