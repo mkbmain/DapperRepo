@@ -41,7 +41,7 @@ namespace Mkb.DapperRepo.Repo
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var wheres = entityPropertyInfo.AllNonId
                 .Where(r=> !ignoreNulls || (typeof(T).GetProperty(r.Name)?.GetValue(element, null) != null))
-                .Select(f => $"{f.Name} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
+                .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
                 .ToArray();
 
             var test = $" where {String.Join(" and ", wheres)}";
@@ -67,8 +67,11 @@ namespace Mkb.DapperRepo.Repo
                 .Select(f => f.Name)
                 .ToArray();
 
+            var sqlNames = propertyInfo.ClassPropertyColNamesDetails.Select(e=> e.Value)
+                .Where(e=> properties.Contains(e.ClassPropertyName) )
+                .Select(e => e.SqlPropertyName);
             var sql =
-                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", properties)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
+                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", sqlNames)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
             return action.Invoke(Connection(), sql);
         }
@@ -79,7 +82,7 @@ namespace Mkb.DapperRepo.Repo
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
                 .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
-                .Select(f => $"{f.Name} = @{f.Name}");
+                .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
             var sql =
                 $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
@@ -101,7 +104,7 @@ namespace Mkb.DapperRepo.Repo
         }
         
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
-            $"where {entityPropertyInfo.Id.Name} = @{entityPropertyInfo.Id.Name}";
+            $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
 
         private static string GetTableNameFromType(MemberInfo type)
         {

@@ -12,16 +12,18 @@ namespace Mkb.DapperRepo.Tests.Entities
         }
         public TableWithAutoIncrementPrimaryKeyDiffSqlName(TableWithAutoIncrementPrimaryKey item)
         {
-            Id = item.Id;
-            Name = item.Name;
-            SomeNumber = item.SomeNumber;
+            TestId = item.BigTest;
+            NameTest = item.NameTests;
+            SomeNum = item.SomeNum;
         }
         
         [PrimaryKey]
-        public int? Id { get; set; }
-
-        public string Name { get; set; }
-        public int? SomeNumber { get; set; }
+        [RepoColumn("Id")]
+        public int? TestId { get; set; }
+        [RepoColumn("Name")]
+        public string NameTest { get; set; }
+        [RepoColumn("SomeNumber")]
+        public int? SomeNum { get; set; }
     }
     
     // This is a copy of TableWithAutIncrementPrimaryKey but with different names and sql name makes them the same for testing
