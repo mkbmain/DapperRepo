@@ -25,7 +25,7 @@ namespace Mkb.DapperRepo.Tests.Utils
             IEnumerable<TableWithAutoIncrementPrimaryKey> testTables)
         {
             var sql =
-                $"Insert into {nameof(TableWithAutoIncrementPrimaryKey)} (name,SomeNumber) values{string.Join(",", testTables.Select(f => $"('{f.Name ?? "Null"}',{f.SomeNumber?.ToString() ?? "Null"})"))}";
+                $"Insert into {nameof(TableWithAutoIncrementPrimaryKey)} (name,SomeNumber) values{string.Join(",", testTables.Select(f => $"('{f.NameTests ?? "Null"}',{f.SomeNum?.ToString() ?? "Null"})"))}";
             ExecuteCommandNonQuery(connection, sql);
         }
 

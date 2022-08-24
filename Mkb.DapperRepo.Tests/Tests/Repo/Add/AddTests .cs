@@ -48,7 +48,7 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
         [Test]
         public void Ensure_we_can_add_with_auto_increment()
         {
-            var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michale", SomeNumber = 33};
+            var testTableItem = new TableWithAutoIncrementPrimaryKey() {NameTests = "Michale", SomeNum = 33};
             Sut.Add(testTableItem);
 
 
@@ -58,16 +58,16 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
             Assert.AreEqual(1, items.Length);
             var test = items.FirstOrDefault();
             Assert.IsNotNull(test);
-            Assert.IsNotNull(test.Id);
-            Assert.True(test.Id>0);
-            Assert.AreEqual(testTableItem.Name, test.Name);
-            Assert.AreEqual(testTableItem.SomeNumber, test.SomeNumber);
+            Assert.IsNotNull(test.BigTest);
+            Assert.True(test.BigTest>0);
+            Assert.AreEqual(testTableItem.NameTests, test.NameTests);
+            Assert.AreEqual(testTableItem.SomeNum, test.SomeNum);
         }
 
         [Test]
         public void Ensure_we_can_add_with_auto_increment_with_diff_names()
         {
-            var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michale", SomeNumber = 33};
+            var testTableItem = new TableWithAutoIncrementPrimaryKey() {NameTests = "Michale", SomeNum = 33};
             Sut.Add(new TableWithAutoIncrementPrimaryKeyDiffSqlName(testTableItem));
 
             var resultInDb = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
@@ -76,16 +76,16 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
             Assert.AreEqual(1, items.Length);
             var test = items.FirstOrDefault();
             Assert.IsNotNull(test);
-            Assert.IsNotNull(test.Id);
-            Assert.True(test.Id>0);
-            Assert.AreEqual(testTableItem.Name, test.Name);
-            Assert.AreEqual(testTableItem.SomeNumber, test.SomeNumber);
+            Assert.IsNotNull(test.BigTest);
+            Assert.True(test.BigTest>0);
+            Assert.AreEqual(testTableItem.NameTests, test.NameTests);
+            Assert.AreEqual(testTableItem.SomeNum, test.SomeNum);
         }
 
         [Test]
         public void Ensure_we_can_add_with_null_field_for_other_values()
         {
-            var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michale", SomeNumber = null};
+            var testTableItem = new TableWithAutoIncrementPrimaryKey() {NameTests = "Michale", SomeNum = null};
             Sut.Add(testTableItem);
 
             var resultInDb = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
@@ -94,16 +94,16 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
             Assert.AreEqual(1, items.Length);
             var test = items.FirstOrDefault();
             Assert.IsNotNull(test);
-            Assert.IsNotNull(test.Id);
-            Assert.True(test.Id>0);
-            Assert.AreEqual(testTableItem.Name, test.Name);
-            Assert.IsNull(test.SomeNumber);
+            Assert.IsNotNull(test.BigTest);
+            Assert.True(test.BigTest>0);
+            Assert.AreEqual(testTableItem.NameTests, test.NameTests);
+            Assert.IsNull(test.SomeNum);
         }
 
         [Test]
         public void Ensure_we_can_add_with_null_field_for_other_values_with_diff_name()
         {
-            var testTableItem = new TableWithAutoIncrementPrimaryKey() {Name = "Michale", SomeNumber = null};
+            var testTableItem = new TableWithAutoIncrementPrimaryKey() {NameTests = "Michale", SomeNum = null};
             Sut.Add(new TableWithAutoIncrementPrimaryKeyDiffSqlName(testTableItem));
 
             var resultInDb = DataBaseScriptRunnerAndBuilder.GetAll<TableWithAutoIncrementPrimaryKey>(Connection);
@@ -112,10 +112,10 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Add
             Assert.AreEqual(1, items.Length);
             var test = items.FirstOrDefault();
             Assert.IsNotNull(test);
-            Assert.IsNotNull(test.Id);
-            Assert.True(test.Id>0);
-            Assert.AreEqual(testTableItem.Name, test.Name);
-            Assert.IsNull(test.SomeNumber);
+            Assert.IsNotNull(test.BigTest);
+            Assert.True(test.BigTest>0);
+            Assert.AreEqual(testTableItem.NameTests, test.NameTests);
+            Assert.IsNull(test.SomeNum);
         }
     }
 }

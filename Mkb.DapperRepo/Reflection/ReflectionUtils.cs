@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Dapper;
 using Mkb.DapperRepo.Attributes;
 
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
@@ -25,7 +26,15 @@ namespace Mkb.DapperRepo.Reflection
                 f.GetCustomAttributes(typeof(PrimaryKeyAttribute), false)
                     .Any()); // primary key determined by attribute now
             var epv = new EntityPropertyInfo(id, properties);
-            TypeLookup.Add(typeof(T), epv);
+            lock (TypeLookup)
+            {
+                if (TypeLookup.ContainsKey(typeof(T)))
+                {
+                    return epv;
+                }
+                TypeLookup.Add(typeof(T), epv); 
+            }
+            SqlMapper.SetTypeMap(typeof(T), new CustomPropertyTypeMap(typeof(T), (type, colName) => epv.SqlPropertyColNamesDetails[colName.ToLower()].PropertyInfo));
             return epv;
         }
 
