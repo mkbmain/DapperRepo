@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Mkb.DapperRepo.Attributes;
 
 namespace Mkb.DapperRepo.Tests.Entities
@@ -8,7 +9,8 @@ namespace Mkb.DapperRepo.Tests.Entities
         [PrimaryKey]
         public string Id { get; set; }      // hate this butttttt mysql does not support guids
 
-        public string Name { get; set; }
+        [RepoColumn("Name")]
+        public string NameTest { get; set; }
         public int? SomeNumber { get; set; }
  
     }
