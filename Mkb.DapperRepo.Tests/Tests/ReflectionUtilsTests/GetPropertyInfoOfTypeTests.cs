@@ -1,4 +1,5 @@
 using System;
+using Mkb.DapperRepo.Attributes;
 using Mkb.DapperRepo.Reflection;
 using NUnit.Framework;
 
@@ -16,6 +17,7 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
         {
             var item = ReflectionUtils.GetPropertyInfoOfType<ReflectionTest>(typeof(string),
                 nameof(ReflectionTest.Name));
+            
             Assert.IsNotNull(item);
         }
 
