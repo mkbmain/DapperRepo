@@ -10,6 +10,8 @@ namespace Mkb.DapperRepo.Search
         {
             switch (type)
             {
+                case SearchType.IsNull:
+                    return "is null";
                 case SearchType.Equals:
                     return "=";
                 case SearchType.Like:

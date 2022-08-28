@@ -56,7 +56,7 @@ namespace Mkb.DapperRepo.Repo
             var reflectionType = ReflectionUtils.GetEntityPropertyInfo<T>();
             var searches = string.Join(" And ",
                 searchCriteria.Select(e =>
-                    $"{reflectionType.ClassPropertyColNamesDetails[ e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  @{e.PropertyName}"));
+                    $"{reflectionType.ClassPropertyColNamesDetails[ e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {( e.SearchType == SearchType.IsNull ? "": $"@{e.PropertyName}")}"));
             return BaseGetAll<T, Tout>((connection, sql2) => func(connection, ($"{sql2} where  {searches} ")));
         }
 
