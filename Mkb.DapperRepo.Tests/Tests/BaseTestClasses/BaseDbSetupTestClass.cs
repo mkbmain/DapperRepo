@@ -30,7 +30,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
             foreach (var item in sql.Split("{WaitBlock}"))
             {
                 // this might be come a bottlekneck as we create a new connection for every command but hay its tests should not be doing anything massive
-               DataBaseScriptRunnerAndBuilder. ExecuteCommandNonQuery(first? DapperRepo.Tests.Connection.MasterConnectionString : Connection, item);
+               DataBaseScriptRunnerAndBuilder.ExecuteCommandNonQuery(first? DapperRepo.Tests.Connection.MasterConnectionString : Connection, item);
                first = false;
             }
         }
@@ -38,7 +38,6 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
         [TearDown]
         public void TearDown()
         {
-            
             DataBaseScriptRunnerAndBuilder.KillDb( DapperRepo.Tests.Connection.MasterConnectionString, DbName);
         }
     }
