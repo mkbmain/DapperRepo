@@ -1,10 +1,10 @@
 namespace Mkb.DapperRepo.Attributes
 {
     [System.AttributeUsage(System.AttributeTargets.Property)]  
-    public class RepoColumnAttribute :System.Attribute  
+    public class SqlColumnNameAttribute :System.Attribute  
     {
         public string Name { get; }
-        public RepoColumnAttribute(string name)
+        public SqlColumnNameAttribute(string name)
         {
             Name = name;
         }

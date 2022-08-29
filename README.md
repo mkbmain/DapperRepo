@@ -67,7 +67,7 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
    
         public string Name { get; set; }
         public string Email { get; set; }
-        [RepoColumn("some_number")]      // this can be used to map columns in sql for unconventional names
+        [SqlColumnName("some_number")]      // this can be used to map columns in sql for unconventional names
         public int SomeNumber { get; set; }
     }
 ```

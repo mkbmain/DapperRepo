@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests.Entities
         [PrimaryKey]
         public string Id { get; set; }      // hate this butttttt mysql does not support guids
 
-        [RepoColumn("Name")]
+        [SqlColumnName("Name")]
         public string NameTest { get; set; }
         public int? SomeNumber { get; set; }
  

@@ -57,7 +57,7 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
 
         private class Example
         {
-            [RepoColumn(ColName)]
+            [SqlColumnName(ColName)]
             public string ColNameChange { get; set; }
         }
     }

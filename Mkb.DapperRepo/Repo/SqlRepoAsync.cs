@@ -16,12 +16,12 @@ namespace Mkb.DapperRepo.Repo
         
         public virtual Task<T> QuerySingle<T>(string sql)
         {
-            return BaseGetAll((connection, sql2) => connection.QueryFirstOrDefaultAsync<T>(sql2), sql);
+            return BaseGetAll<T,Task<T>>((connection, sql2) => connection.QueryFirstOrDefaultAsync<T>(sql2), sql);
         }
 
         public virtual Task<IEnumerable<T>> QueryMany<T>(string sql)
         {
-            return BaseGetAll((connection, sql2) => connection.QueryAsync<T>(sql2), sql);
+            return BaseGetAll<T,Task<IEnumerable<T>>>((connection, sql2) => connection.QueryAsync<T>(sql2), sql);
         }
 
         public virtual Task<IEnumerable<T>> GetAllByX<T, PropT>(string property, object term) where T : class, new()
