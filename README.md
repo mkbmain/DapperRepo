@@ -192,3 +192,14 @@ Located in CreateDbWithTestTable.Sql you will find the create database scripts.
 
 
 Special Thanks to armanx
+
+
+
+## Notes:
+
+### SqlColumnName: 
+Uses simple reflection on the class looking for both class property names and sql col names (set via attribute) and sets up mapping to both.
+Check query tests for more details. 
+
+Please note as most sql servers implementations are not case sensitive nor is the mapper. 
+Meaning having 2 fields named the same thing with different casing in the same class this may result in undesirable results.
