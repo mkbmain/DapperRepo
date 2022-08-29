@@ -67,7 +67,7 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
    
         public string Name { get; set; }
         public string Email { get; set; }
-        [RepoColumn("some_number")]      // this can be used to map columns in sql for unconventional names
+        [SqlColumnName("some_number")]      // this can be used to map columns in sql for unconventional names
         public int SomeNumber { get; set; }
     }
 ```
@@ -192,3 +192,14 @@ Located in CreateDbWithTestTable.Sql you will find the create database scripts.
 
 
 Special Thanks to armanx
+
+
+
+## Notes:
+
+### SqlColumnName: 
+Uses simple reflection on the class looking for both class property names and sql col names (set via attribute) and sets up mapping to both.
+Check query tests for more details. 
+
+Please note as most sql servers implementations are not case sensitive nor is the mapper. 
+Meaning having 2 fields named the same thing with different casing in the same class this may result in undesirable results.

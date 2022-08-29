@@ -28,26 +28,28 @@ namespace Mkb.DapperRepo.Repo
 
         protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func)
         {
-            return BaseGetAll(func, $"select * from {GetTableNameFromType(typeof(T))}");
+            return BaseGetAll<T, TOut>(func, $"select * from {GetTableNameFromType(typeof(T))}");
         }
 
-        protected TOut BaseGetAll<TOut>(Func<DbConnection, string, TOut> func, string sql)
+        protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func, string sql)
         {
+            Mappers.TableMapper.Setup<T>();
             return func.Invoke(Connection(), sql);
         }
-        
-        protected Tout BaseGetExactMatches<T, Tout>(T element, Func<DbConnection, string, Tout> func, bool ignoreNulls )
+
+        protected Tout BaseGetExactMatches<T, Tout>(T element, Func<DbConnection, string, Tout> func, bool ignoreNulls)
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var wheres = entityPropertyInfo.AllNonId
-                .Where(r=> !ignoreNulls || (typeof(T).GetProperty(r.Name)?.GetValue(element, null) != null))
-                .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
+                .Where(r => !ignoreNulls || (typeof(T).GetProperty(r.Name)?.GetValue(element, null) != null))
+                .Select(f =>
+                    $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
                 .ToArray();
 
             var test = $" where {String.Join(" and ", wheres)}";
 
             return BaseGetAll<T, Tout>((connection, s) =>
-                func(connection,$"{s}{test}" ));
+                func(connection, $"{s}{test}"));
         }
 
         protected Tout BaseSearch<T, Tout>(Func<DbConnection, string, Tout> func,
@@ -56,7 +58,7 @@ namespace Mkb.DapperRepo.Repo
             var reflectionType = ReflectionUtils.GetEntityPropertyInfo<T>();
             var searches = string.Join(" And ",
                 searchCriteria.Select(e =>
-                    $"{reflectionType.ClassPropertyColNamesDetails[ e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {( e.SearchType == SearchType.IsNull ? "": $"@{e.PropertyName}")}"));
+                    $"{reflectionType.ClassPropertyColNamesDetails[e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {(e.SearchType == SearchType.IsNull ? "" : $"@{e.PropertyName}")}"));
             return BaseGetAll<T, Tout>((connection, sql2) => func(connection, ($"{sql2} where  {searches} ")));
         }
 
@@ -68,8 +70,8 @@ namespace Mkb.DapperRepo.Repo
                 .Select(f => f.Name)
                 .ToArray();
 
-            var sqlNames = propertyInfo.ClassPropertyColNamesDetails.Select(e=> e.Value)
-                .Where(e=> properties.Contains(e.ClassPropertyName) )
+            var sqlNames = propertyInfo.ClassPropertyColNamesDetails.Select(e => e.Value)
+                .Where(e => properties.Contains(e.ClassPropertyName))
                 .Select(e => e.SqlPropertyName);
             var sql =
                 $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", sqlNames)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
@@ -103,7 +105,7 @@ namespace Mkb.DapperRepo.Repo
             theField.SetValue(item, valueToSearchBy);
             return item;
         }
-        
+
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
 

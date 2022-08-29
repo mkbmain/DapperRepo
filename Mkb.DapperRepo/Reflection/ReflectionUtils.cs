@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Dapper;
 using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Mappers;
 
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
 
@@ -32,9 +32,11 @@ namespace Mkb.DapperRepo.Reflection
                 {
                     return epv;
                 }
-                TypeLookup.Add(typeof(T), epv); 
+
+                TypeLookup.Add(typeof(T), epv);
             }
-            SqlMapper.SetTypeMap(typeof(T), new CustomPropertyTypeMap(typeof(T), (type, colName) => epv.SqlPropertyColNamesDetails[colName.ToLower()].PropertyInfo));
+
+            TableMapper.Setup<T>();
             return epv;
         }
 

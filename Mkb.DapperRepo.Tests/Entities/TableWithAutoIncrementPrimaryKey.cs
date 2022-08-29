@@ -6,11 +6,11 @@ namespace Mkb.DapperRepo.Tests.Entities
     public class TableWithAutoIncrementPrimaryKey
     {
         [PrimaryKey]
-        [RepoColumn("Id")]
+        [SqlColumnName("Id")]
         public int? BigTest { get; set; }
-        [RepoColumn("Name")]
+        [SqlColumnName("Name")]
         public string NameTests { get; set; }
-        [RepoColumn("SomeNumber")]
+        [SqlColumnName("SomeNumber")]
         public int? SomeNum { get; set; }
     }
 }

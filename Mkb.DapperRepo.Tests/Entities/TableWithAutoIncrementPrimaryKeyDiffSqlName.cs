@@ -18,11 +18,11 @@ namespace Mkb.DapperRepo.Tests.Entities
         }
         
         [PrimaryKey]
-        [RepoColumn("Id")]
+        [SqlColumnName("Id")]
         public int? TestId { get; set; }
-        [RepoColumn("Name")]
+        [SqlColumnName("Name")]
         public string NameTest { get; set; }
-        [RepoColumn("SomeNumber")]
+        [SqlColumnName("SomeNumber")]
         public int? SomeNum { get; set; }
     }
     
