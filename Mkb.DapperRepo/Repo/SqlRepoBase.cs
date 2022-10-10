@@ -79,7 +79,7 @@ namespace Mkb.DapperRepo.Repo
             return action.Invoke(Connection(), sql);
         }
 
-        // we need to return here to ensure if its async it completes the task hence we use func not action
+
         protected Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<DbConnection, string, Task> func)
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
@@ -88,7 +88,20 @@ namespace Mkb.DapperRepo.Repo
                 .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
             var sql =
-                $"update  {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
+                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
+
+            return BaseExecute<T>(sql, func);
+        }
+
+        protected Task BaseExecute<T>(string sql, Func<DbConnection, string, Task> func)
+        {
+            ReflectionUtils.GetEntityPropertyInfo<T>();
+            return BaseExecute(sql, func);
+        }
+
+        // we need to return here to ensure if its async it completes the task hence we use func not action
+        protected Task BaseExecute(string sql, Func<DbConnection, string, Task> func)
+        {
             return func.Invoke(Connection(), sql);
         }
 

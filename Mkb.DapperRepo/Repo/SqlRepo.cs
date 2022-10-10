@@ -16,12 +16,12 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual T QuerySingle<T>(string sql)
         {
-            return BaseGetAll<T,T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2), sql);
+            return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2), sql);
         }
 
         public virtual IEnumerable<T> QueryMany<T>(string sql)
         {
-            return BaseGetAll<T,IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2), sql);
+            return BaseGetAll<T, IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2), sql);
         }
 
         public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, object term) where T : class, new()
@@ -39,13 +39,13 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseGetAll<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s));
         }
-        
+
         public virtual IEnumerable<T> GetExactMatches<T>(T item, bool ignoreNulls)
         {
             return BaseGetExactMatches(item, (connection2, s2) =>
                 connection2.Query<T>(s2, item), ignoreNulls);
         }
-        
+
         public virtual IEnumerable<T> Search<T>(string property, string term) where T : class, new()
         {
             return Search<T>(SetFieldOf<T, string>(new T(), property, term),
@@ -73,12 +73,22 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)
         {
-            BaseUpdate(element, ignoreNullProperties, (connection, s) =>
-            {
-                connection.Execute(s, new[] {element});
-                return Task.CompletedTask;
-            });
+            BaseUpdate(element, ignoreNullProperties, ExecuteFunc(element));
         }
+        
+        public virtual void Execute(string sql) => BaseExecute(sql, (connection, s) =>
+        {
+            connection.Execute(s);
+            return Task.CompletedTask;
+        });
+        
+        public virtual void Execute<T>(T element, string sql) => BaseExecute<T>(sql, ExecuteFunc(element));
+
+        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
+        {
+            connection.Execute(s, new[] {element});
+            return Task.CompletedTask;
+        };
 
         public virtual void Delete<T>(T element)
         {
