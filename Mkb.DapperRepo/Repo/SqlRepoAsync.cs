@@ -32,8 +32,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual Task<IEnumerable<T>> GetAllByX<T, PropT>(string property, object term,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return Search<T>(SetFieldOf<T, PropT>(new T(), property, term),
-                new SearchCriteria {PropertyName = property, SearchType = SearchType.Equals}, cancellationToken);
+            return Search<T>(SetFieldOf<T, PropT>(new T(), property, term), SearchCriteria.Create(property, SearchType.Equals), cancellationToken);
         }
 
         public virtual Task<T> GetById<T>(T element, CancellationToken cancellationToken = default)
@@ -57,17 +56,22 @@ namespace Mkb.DapperRepo.Repo
                 ignoreNulls);
         }
 
+        public virtual Task<IEnumerable<T>> Search<T, TIn>(string property, TIn term, SearchType searchType,
+            CancellationToken cancellationToken = default) where T : class, new()
+        {
+            return Search(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property,searchType), cancellationToken);
+        }
+
         public virtual Task<IEnumerable<T>> Search<T>(string property, string term,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return Search(SetFieldOf<T, string>(new T(), property, term),
-                new SearchCriteria {PropertyName = property, SearchType = SearchType.Like}, cancellationToken);
+            return Search<T, string>(property, term, SearchType.Like, cancellationToken);
         }
 
         public virtual Task<IEnumerable<T>> Search<T>(T item, SearchCriteria searchCriteria,
             CancellationToken cancellationToken = default)
         {
-            return Search(item, new[] {searchCriteria}, cancellationToken);
+            return Search(item, new[] { searchCriteria }, cancellationToken);
         }
 
         public virtual Task<IEnumerable<T>> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria,
@@ -81,7 +85,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual Task Add<T>(T element, CancellationToken cancellationToken = default)
         {
-            return BaseAdd(new[] {element},
+            return BaseAdd(new[] { element },
                 async (connection, s) =>
                 {
                     await connection.QueryAsync<T>(new CommandDefinition(s, element,
@@ -94,23 +98,23 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseUpdate(element, ignoreNullProperties,
                 (connection, s) =>
-                    connection.ExecuteAsync(new CommandDefinition(s, new[] {element},
+                    connection.ExecuteAsync(new CommandDefinition(s, new[] { element },
                         cancellationToken: cancellationToken)));
         }
 
         public virtual Task Execute(string sql) => BaseExecute(sql, (connection, s) => connection.ExecuteAsync(s));
-        
+
         public virtual Task Execute<T>(T element, string sql) => BaseExecute<T>(sql, ExecuteFunc(element));
 
         private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
         {
-            return connection.ExecuteAsync(s, new[] {element});
+            return connection.ExecuteAsync(s, new[] { element });
         };
 
         public virtual Task Delete<T>(T element, CancellationToken cancellationToken = default)
         {
             return BaseDelete<T>((connection, s) =>
-                connection.ExecuteAsync(new CommandDefinition(s, new[] {element},
+                connection.ExecuteAsync(new CommandDefinition(s, new[] { element },
                     cancellationToken: cancellationToken)));
         }
     }
