@@ -10,6 +10,7 @@
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
         <PackageVersion>2.2.5</PackageVersion>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/mkbmain/DapperRepo/main/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
