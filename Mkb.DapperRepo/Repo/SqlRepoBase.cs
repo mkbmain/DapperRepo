@@ -49,7 +49,7 @@ namespace Mkb.DapperRepo.Repo
             var whereClause = $" where {String.Join(" and ", wheres)}";
 
             return BaseGetAll<T, Tout>((connection, sql) =>
-                func(connection, $"{sql}{whereClause}"));
+                func(connection, $"b {sql}{whereClause}"));
         }
 
         protected Tout BaseSearch<T, Tout>(Func<DbConnection, string, Tout> func,
