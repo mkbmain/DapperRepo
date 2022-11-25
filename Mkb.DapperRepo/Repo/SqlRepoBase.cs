@@ -46,10 +46,10 @@ namespace Mkb.DapperRepo.Repo
                     $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
                 .ToArray();
 
-            var test = $" where {String.Join(" and ", wheres)}";
+            var whereClause = $" where {String.Join(" and ", wheres)}";
 
-            return BaseGetAll<T, Tout>((connection, s) =>
-                func(connection, $"{s}{test}"));
+            return BaseGetAll<T, Tout>((connection, sql) =>
+                func(connection, $"{sql}{whereClause}"));
         }
 
         protected Tout BaseSearch<T, Tout>(Func<DbConnection, string, Tout> func,
@@ -121,7 +121,7 @@ namespace Mkb.DapperRepo.Repo
 
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
-
+        
         private static string GetTableNameFromType(MemberInfo type)
         {
             var attribute = type.GetCustomAttribute(typeof(SqlTableNameAttribute), false);
