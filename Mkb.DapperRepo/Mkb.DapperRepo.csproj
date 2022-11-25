@@ -10,8 +10,12 @@
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
         <PackageVersion>2.2.5</PackageVersion>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/mkbmain/DapperRepo/main/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
+
+<PropertyGroup>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+</PropertyGroup>
+
 
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.0.123" />
