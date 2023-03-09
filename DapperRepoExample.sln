@@ -8,15 +8,35 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Postgres|Any CPU = Postgres|Any CPU
+		MySql|Any CPU = MySql|Any CPU
+		Sqlite|Any CPU = Sqlite|Any CPU
+		SqlServer|Any CPU = SqlServer|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Postgres|Any CPU.ActiveCfg = Postgres|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Postgres|Any CPU.Build.0 = Postgres|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.MySql|Any CPU.ActiveCfg = MySql|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.MySql|Any CPU.Build.0 = MySql|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Sqlite|Any CPU.ActiveCfg = Sqlite|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.Sqlite|Any CPU.Build.0 = Sqlite|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.SqlServer|Any CPU.ActiveCfg = SqlServer|Any CPU
+		{687AF38D-51FA-47C3-A56A-9733A70860F2}.SqlServer|Any CPU.Build.0 = SqlServer|Any CPU
 		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Postgres|Any CPU.ActiveCfg = Postgres|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Postgres|Any CPU.Build.0 = Postgres|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.MySql|Any CPU.ActiveCfg = MySql|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.MySql|Any CPU.Build.0 = MySql|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Sqlite|Any CPU.ActiveCfg = Sqlite|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.Sqlite|Any CPU.Build.0 = Sqlite|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.SqlServer|Any CPU.ActiveCfg = SqlServer|Any CPU
+		{68F64ECE-A9DB-4071-8C6D-ED494F46196A}.SqlServer|Any CPU.Build.0 = SqlServer|Any CPU
 	EndGlobalSection
 EndGlobal
