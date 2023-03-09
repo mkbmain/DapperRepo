@@ -23,9 +23,11 @@ namespace Mkb.DapperRepo.Reflection
             }
 
             var properties = typeof(T).GetProperties()
-                .Where(w=> !w.GetCustomAttributes(typeof(SqlColumnIgnoreAttribute),false).Any() ).ToArray();
+                .Where(w => !w.GetCustomAttributes(typeof(SqlColumnIgnoreAttribute), true).Any())
+                .ToArray();
+
             var id = properties.FirstOrDefault(f =>
-                f.GetCustomAttributes(typeof(PrimaryKeyAttribute), false)
+                f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true)
                     .Any()); // primary key determined by attribute now
             var epv = new EntityPropertyInfo(id, properties);
             lock (obLock)
