@@ -13,6 +13,7 @@ namespace Mkb.DapperRepo.Reflection
     internal static class ReflectionUtils
     {
         private static Dictionary<Type, EntityPropertyInfo> TypeLookup = new Dictionary<Type, EntityPropertyInfo>();
+        private static object obLock = new object();
 
         internal static EntityPropertyInfo GetEntityPropertyInfo<T>()
         {
@@ -21,12 +22,13 @@ namespace Mkb.DapperRepo.Reflection
                 return item;
             }
 
-            var properties = typeof(T).GetProperties().ToArray();
+            var properties = typeof(T).GetProperties()
+                .Where(w=> !w.GetCustomAttributes(typeof(SqlColumnIgnoreAttribute),false).Any() ).ToArray();
             var id = properties.FirstOrDefault(f =>
                 f.GetCustomAttributes(typeof(PrimaryKeyAttribute), false)
                     .Any()); // primary key determined by attribute now
             var epv = new EntityPropertyInfo(id, properties);
-            lock (TypeLookup)
+            lock (obLock)
             {
                 if (TypeLookup.ContainsKey(typeof(T)))
                 {
