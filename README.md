@@ -69,6 +69,9 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
         public string Email { get; set; }
         [SqlColumnName("some_number")]      // this can be used to map columns in sql for unconventional names
         public int SomeNumber { get; set; }
+        
+        [SqlIgnoreColumn]           // this will tell the dapper repo to ignore this property and not map it to the entitiy
+        public string ToBeIgnored { get; set; }
     }
 ```
 

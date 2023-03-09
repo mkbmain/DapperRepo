@@ -23,7 +23,7 @@ namespace Mkb.DapperRepo.Reflection
             }
 
             var properties = typeof(T).GetProperties()
-                .Where(w => !w.GetCustomAttributes(typeof(SqlColumnIgnoreAttribute), true).Any())
+                .Where(w => !w.GetCustomAttributes(typeof(SqlIgnoreColumnAttribute), true).Any())
                 .ToArray();
 
             var id = properties.FirstOrDefault(f =>

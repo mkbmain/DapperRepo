@@ -14,7 +14,7 @@ namespace Mkb.DapperRepo.Tests.Entities
 
         public int? SomeNumber { get; set; }
 
-        [SqlColumnIgnore]
+        [SqlIgnoreColumn]
         public string Blah { get; set; }
     }
 
