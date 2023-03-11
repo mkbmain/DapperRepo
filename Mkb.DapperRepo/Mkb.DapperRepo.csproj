@@ -9,7 +9,7 @@
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
-        <PackageVersion>2.2.5</PackageVersion>
+        <PackageVersion>2.2.6</PackageVersion>
         <Configurations>Debug;Release;Postgres;MySql;Sqlite;SqlServer</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
