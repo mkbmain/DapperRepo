@@ -25,7 +25,7 @@ All examples are done with the standard repo but will work with the async versio
 Full examples can be found on the github repo with in the test project.
 
 ## Initializing a new repo
-```
+```csharp
   new SqlRepo(()=> new DbConnection());
   
   e.g
@@ -35,7 +35,7 @@ Full examples can be found on the github repo with in the test project.
   new SqlRepo(()=> new SqliteConnection("connection string"));  // Sqlite
   ```
 or of course via DI
-```
+```csharp
   
   // or where ever you want to get the connection string from it from
   // you can ofc use Scoped or Single instead if you wish but depends on sql implementation and how it handles connections
