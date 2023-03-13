@@ -1,7 +1,8 @@
 # DapperRepo
 
 Simple dapper repo with async implementation.
-<br>designed to generate simple crud operations while still being lite weight
+
+designed to generate simple crud operations while still being lite weight
 
 ## Currently supported and tested for these providers
 
@@ -12,7 +13,8 @@ Simple dapper repo with async implementation.
 | PostgreSQL | NpgsqlConnection | Npgsql                |
 | Sqlite     | SqliteConnection | Microsoft.Data.Sqlite |
 
-It may work for others. <br>
+It may work for others. 
+
 (sql lite I recently added, I made no changes to the repo just added test setup to confirm it worked).
 
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
