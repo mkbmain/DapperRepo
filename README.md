@@ -159,11 +159,11 @@ Count Is more light weight if you just need a any equivalent.
 ```csharp
 Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
 
-or for specific types
+// or for specific types
 Repo.Search<TableModel, int>(
                     nameof(TableModel.SomeNumber), 33, SearchType.Equals);
 
-and search multiple criteria
+// and search multiple criteria
 
  Repo.Search(new TableModel
             {
