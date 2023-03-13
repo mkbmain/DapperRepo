@@ -7,11 +7,11 @@ namespace Mkb.DapperRepo.Mappers
 {
     internal class TableMapper
     {
-        private static Dictionary<Type, bool> MapDone = new Dictionary<Type, bool>();
+        private static HashSet<Type> MapDone = new HashSet<Type>();
 
         internal static void Setup<T>()
         {
-            if (MapDone.ContainsKey(typeof(T)))
+            if (MapDone.Contains(typeof(T)))
             {
                 return;
             }
@@ -21,7 +21,7 @@ namespace Mkb.DapperRepo.Mappers
 
         private static void SetMap<T>(EntityPropertyInfo info)
         {
-            if (MapDone.ContainsKey(typeof(T)))
+            if (MapDone.Contains(typeof(T)))
             {
                 return;
             }
@@ -45,9 +45,9 @@ namespace Mkb.DapperRepo.Mappers
             
             lock (MapDone)
             {
-                if (!MapDone.ContainsKey(typeof(T)))
+                if (!MapDone.Contains(typeof(T)))
                 {
-                    MapDone.Add(typeof(T), true);
+                    MapDone.Add(typeof(T));
                 }
             }
         }
