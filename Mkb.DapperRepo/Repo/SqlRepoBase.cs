@@ -25,6 +25,10 @@ namespace Mkb.DapperRepo.Repo
                 func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
 
+        protected TOut BaseCount<T, TOut>(Func<DbConnection, string, TOut> func)
+        {
+            return BaseGetAll<T, TOut>(func, $"select COUNT(*) from {GetTableNameFromType(typeof(T))}");
+        }
 
         protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func)
         {
@@ -52,14 +56,16 @@ namespace Mkb.DapperRepo.Repo
                 func(connection, $"{sql}{whereClause}"));
         }
 
-        protected Tout BaseSearch<T, Tout>(Func<DbConnection, string, Tout> func,
+        protected TOut BaseSearchEntity<T, TOut>(Func<DbConnection, string, TOut> func,
             IEnumerable<SearchCriteria> searchCriteria)
         {
-            var reflectionType = ReflectionUtils.GetEntityPropertyInfo<T>();
-            var searches = string.Join(" And ",
-                searchCriteria.Select(e =>
-                    $"{reflectionType.ClassPropertyColNamesDetails[e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {(e.SearchType == SearchType.IsNull ? "" : $"@{e.PropertyName}")}"));
-            return BaseGetAll<T, Tout>((connection, sql2) => func(connection, ($"{sql2} where  {searches} ")));
+            return BaseGetAll<T, TOut>((connection, sql2) => func(connection, BuildWhereString<T>(sql2,searchCriteria)));
+        }
+
+        protected TOut BaseSearchCount<T, TOut>(Func<DbConnection, string, TOut> func,
+            IEnumerable<SearchCriteria> searchCriteria)
+        {
+            return BaseCount<T, TOut>((connection, sql2) => func(connection, BuildWhereString<T>(sql2,searchCriteria)));
         }
 
         protected Task BaseAdd<T>(IEnumerable<T> elements, Func<DbConnection, string, Task> action)
@@ -121,11 +127,22 @@ namespace Mkb.DapperRepo.Repo
 
         private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
             $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
-        
+
         private static string GetTableNameFromType(MemberInfo type)
         {
             var attribute = type.GetCustomAttribute(typeof(SqlTableNameAttribute), false);
             return attribute != null ? ((SqlTableNameAttribute) attribute).Name : type.Name;
+        }
+        
+        private static string BuildWhereString<T>(string sql, IEnumerable<SearchCriteria> searchCriteria) =>
+            $"{sql} where {SearchBuilder<T>(searchCriteria)}";
+
+        private static string SearchBuilder<T>(IEnumerable<SearchCriteria> searchCriteria)
+        {
+            var reflectionType = ReflectionUtils.GetEntityPropertyInfo<T>();
+            return string.Join(" And ",
+                searchCriteria.Select(e =>
+                    $"{reflectionType.ClassPropertyColNamesDetails[e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {(e.SearchType == SearchType.IsNull ? "" : $"@{e.PropertyName}")}"));
         }
     }
 }

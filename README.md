@@ -1,7 +1,8 @@
 # DapperRepo
 
 Simple dapper repo with async implementation.
-<br>designed to generate simple crud operations while still being lite weight
+
+designed to generate simple crud operations while still being lite weight
 
 ## Currently supported and tested for these providers
 
@@ -12,7 +13,8 @@ Simple dapper repo with async implementation.
 | PostgreSQL | NpgsqlConnection | Npgsql                |
 | Sqlite     | SqliteConnection | Microsoft.Data.Sqlite |
 
-It may work for others. <br>
+It may work for others. 
+
 (sql lite I recently added, I made no changes to the repo just added test setup to confirm it worked).
 
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
@@ -25,7 +27,7 @@ All examples are done with the standard repo but will work with the async versio
 Full examples can be found on the github repo with in the test project.
 
 ## Initializing a new repo
-```
+```csharp
   new SqlRepo(()=> new DbConnection());
   
   e.g
@@ -35,7 +37,7 @@ Full examples can be found on the github repo with in the test project.
   new SqlRepo(()=> new SqliteConnection("connection string"));  // Sqlite
   ```
 or of course via DI
-```
+```csharp
   
   // or where ever you want to get the connection string from it from
   // you can ofc use Scoped or Single instead if you wish but depends on sql implementation and how it handles connections
@@ -56,7 +58,7 @@ Regardless of the db tech.
 ## Creating entities
 please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
-```
+```csharp
     [SqlTableName("Test_Table")]         // can be used to get around pluralization and also unconventional table names  
     public class TableModel
     {
@@ -75,66 +77,46 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
     }
 ```
 
-## Search
+## Count
+```csharp
+     var count = Repo.Count<TableModel>();
 ```
-Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
 
-or for specific types
-Repo.Search<TableModel, int>(
-                    nameof(TableModel.SomeNumber), 33, SearchType.Equals);
-
-and search multiple criteria
-
- Repo.Search(new TableModel
-            {
-                Name = "%hae%",
-                SomeNumber = 9
-            }, new[]
-            {
-                SearchCriteria.Create(nameof(TableModel.NameTest), SearchType.Like),
-                SearchCriteria.Create(nameof(TableModel.SomeNumber), SearchType.Equals)
-            });
-            
-           // this will allow you to search where name like "%hae%" 
-           // and SomeNumber less than equal to 9
-            
+## Get All
+```csharp
+Repo.GetAll<TableModel>().ToArray();
 ```
 
 ## GetAllByX
-```
+```csharp
 Repo.GetAllByX<TableModel, int>("SomeNumber", 35);
 
 Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
 ```
 
 ## Query single
-```
+```csharp
 Repo.QuerySingle<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
 ```
 
 
 ## Query Multiple
-```
+```csharp
 Repo.QueryMany<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
 ```
 
 ## Get By Id
-```
+```csharp
 Repo.GetById(new TableModel {Id = Guid.Parse("....")});
 Repo.GetById(new TableModelWithIntId {Id =  325});
-```
-
-## Get All
-```
-Repo.GetAll<TableModel>().ToArray();
 ```
 
 ## GetExactMatches
 Know details of a Entity but not its id (like one you have just added)
 
-```
+```csharp
   // false as 2nd param indicates to not to ignore nulls i.e some number has to be null for its model to be returned
   var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, false); 
   
@@ -143,21 +125,21 @@ Know details of a Entity but not its id (like one you have just added)
 ```
 
 ## Delete
-```
+```csharp
 var item =Repo.GetById(new TableModel {Id = Guid.Parse("....")});
 Repo.Delete(item);
 ```
 
 
 ## Add
-```
+```csharp
   var testTableItem = new TableModel() {Name = "Michael", SomeNumber = 44};
   Repo.Add(testTableItem);
 ```
 
 ## Update
  update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
-```
+```csharp
 
  var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
  item.Name = "mike"
@@ -172,10 +154,48 @@ Repo.Delete(item);
  Repo.Update(testTableItem, true);   // will ignore null properties and only update name in db
 ```
 
+## Search And Search Count
+Search will bring you back the entities and search count will give you the number of records. 
+
+Count Is more light weight if you just need a any equivalent.
+```csharp
+Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
+
+// or for specific types
+Repo.Search<TableModel, int>(
+                    nameof(TableModel.SomeNumber), 33, SearchType.Equals);
+
+// and search multiple criteria
+
+ Repo.Search(new TableModel
+            {
+                Name = "%hae%",
+                SomeNumber = 9
+            }, new[]
+            {
+                SearchCriteria.Create(nameof(TableModel.NameTest), SearchType.Like),
+                SearchCriteria.Create(nameof(TableModel.SomeNumber), SearchType.Equals)
+            });
+            
+  Repo.SearchCount(new TableModel
+            {
+                Name = "%hae%",
+                SomeNumber = 9
+            }, new[]
+            {
+                SearchCriteria.Create(nameof(TableModel.NameTest), SearchType.Like),
+                SearchCriteria.Create(nameof(TableModel.SomeNumber), SearchType.Equals)
+            });
+            
+           // this will allow you to search where name like "%hae%" 
+           // and SomeNumber less than equal to 9
+            
+```
+
 
 ### Getting Tests working
 Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
-```
+```csharp
    public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
 ```
 
