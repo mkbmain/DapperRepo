@@ -56,7 +56,7 @@ Regardless of the db tech.
 ## Creating entities
 please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
 
-```
+```csharp
     [SqlTableName("Test_Table")]         // can be used to get around pluralization and also unconventional table names  
     public class TableModel
     {
@@ -75,8 +75,88 @@ please note the primary key attribute found in DapperRepo.PrimaryKeyAttribute.cs
     }
 ```
 
-## Search
+## Count
+```csharp
+     var count = Repo.Count<TableModel>();
 ```
+
+## Get All
+```csharp
+Repo.GetAll<TableModel>().ToArray();
+```
+
+## GetAllByX
+```csharp
+Repo.GetAllByX<TableModel, int>("SomeNumber", 35);
+
+Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
+```
+
+## Query single
+```csharp
+Repo.QuerySingle<TableModel>(
+                "select * from TableModel where SomeNumber = 33");
+```
+
+
+## Query Multiple
+```csharp
+Repo.QueryMany<TableModel>(
+                "select * from TableModel where SomeNumber = 33");
+```
+
+## Get By Id
+```csharp
+Repo.GetById(new TableModel {Id = Guid.Parse("....")});
+Repo.GetById(new TableModelWithIntId {Id =  325});
+```
+
+## GetExactMatches
+Know details of a Entity but not its id (like one you have just added)
+
+```csharp
+  // false as 2nd param indicates to not to ignore nulls i.e some number has to be null for its model to be returned
+  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, false); 
+  
+  // true as 2nd param indicates to ignore nulls i.e some number can be anything in this case
+  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, true); 
+```
+
+## Delete
+```csharp
+var item =Repo.GetById(new TableModel {Id = Guid.Parse("....")});
+Repo.Delete(item);
+```
+
+
+## Add
+```csharp
+  var testTableItem = new TableModel() {Name = "Michael", SomeNumber = 44};
+  Repo.Add(testTableItem);
+```
+
+## Update
+ update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
+```csharp
+
+ var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
+ item.Name = "mike"
+ item.Email = null
+ Repo.Update(testTableItem); // will update properites and also null properties so db will set email to null
+
+ // Example 2
+ var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
+ item.Name = "mike"
+ item.Email = null
+ 
+ Repo.Update(testTableItem, true);   // will ignore null properties and only update name in db
+```
+
+## Search And Search Count
+Search will bring you back the entities and search count will give you the number of records. 
+
+Count Is more light weight if you just need a any equivalent.
+```csharp
 Repo.Search<TableModel>(nameof(TableModel.Name), "%cha%");    // recommended 
 
 or for specific types
@@ -95,87 +175,25 @@ and search multiple criteria
                 SearchCriteria.Create(nameof(TableModel.SomeNumber), SearchType.Equals)
             });
             
+  Repo.SearchCount(new TableModel
+            {
+                Name = "%hae%",
+                SomeNumber = 9
+            }, new[]
+            {
+                SearchCriteria.Create(nameof(TableModel.NameTest), SearchType.Like),
+                SearchCriteria.Create(nameof(TableModel.SomeNumber), SearchType.Equals)
+            });
+            
            // this will allow you to search where name like "%hae%" 
            // and SomeNumber less than equal to 9
             
 ```
 
-## GetAllByX
-```
-Repo.GetAllByX<TableModel, int>("SomeNumber", 35);
-
-Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
-```
-
-## Query single
-```
-Repo.QuerySingle<TableModel>(
-                "select * from TableModel where SomeNumber = 33");
-```
-
-
-## Query Multiple
-```
-Repo.QueryMany<TableModel>(
-                "select * from TableModel where SomeNumber = 33");
-```
-
-## Get By Id
-```
-Repo.GetById(new TableModel {Id = Guid.Parse("....")});
-Repo.GetById(new TableModelWithIntId {Id =  325});
-```
-
-## Get All
-```
-Repo.GetAll<TableModel>().ToArray();
-```
-
-## GetExactMatches
-Know details of a Entity but not its id (like one you have just added)
-
-```
-  // false as 2nd param indicates to not to ignore nulls i.e some number has to be null for its model to be returned
-  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, false); 
-  
-  // true as 2nd param indicates to ignore nulls i.e some number can be anything in this case
-  var results = Repo.GetExactMatches(new TableModel {Name = "Michale", SomeNumber = null}, true); 
-```
-
-## Delete
-```
-var item =Repo.GetById(new TableModel {Id = Guid.Parse("....")});
-Repo.Delete(item);
-```
-
-
-## Add
-```
-  var testTableItem = new TableModel() {Name = "Michael", SomeNumber = 44};
-  Repo.Add(testTableItem);
-```
-
-## Update
- update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
-```
-
- var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
- item.Name = "mike"
- item.Email = null
- Repo.Update(testTableItem); // will update properites and also null properties so db will set email to null
-
- // Example 2
- var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
- item.Name = "mike"
- item.Email = null
- 
- Repo.Update(testTableItem, true);   // will ignore null properties and only update name in db
-```
-
 
 ### Getting Tests working
 Connection.cs contains connection config these are not unit tests they do require a db and will spin one up on fly but for a repo seems better than mocking
-```
+```csharp
    public static string MasterConnectionString = "Server=localhost;Database=master;Trusted_Connection=True";
 ```
 
