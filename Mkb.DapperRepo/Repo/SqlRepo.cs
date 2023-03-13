@@ -40,6 +40,11 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s));
         }
 
+        public virtual int Count<T>()
+        {
+            return BaseCount<T, int>((connection, s) => (connection.ExecuteScalar<int>(new CommandDefinition(s))));
+        }
+
         public virtual IEnumerable<T> GetExactMatches<T>(T item, bool ignoreNulls)
         {
             return BaseGetExactMatches(item, (connection2, s2) =>
@@ -59,17 +64,35 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual IEnumerable<T> Search<T>(T item, SearchCriteria searchCriteria)
         {
-            return Search(item, new[] { searchCriteria });
+            return Search(item, new[] {searchCriteria});
         }
 
         public virtual IEnumerable<T> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
         {
-            return BaseSearch<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
+            return BaseSearchEntity<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
+        }
+
+        public virtual int SearchCount<T, TIn>(string property, TIn term, SearchType searchType) where T : class, new()
+        {
+            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType));
+        }
+
+        public virtual int SearchCount<T>(T item, SearchCriteria searchCriteria)
+        {
+            return SearchCount(item, new[] {searchCriteria});
+        }
+
+        public virtual int SearchCount<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
+        {
+            return BaseSearchCount<T, int>(
+                (connection, s) =>
+                    connection.ExecuteScalar<int>(new CommandDefinition(s, item)),
+                searchCriteria);
         }
 
         public virtual void Add<T>(T element)
         {
-            BaseAdd(new[] { element }, (connection, s) =>
+            BaseAdd(new[] {element}, (connection, s) =>
             {
                 connection.Query<T>(s, element);
                 return Task.CompletedTask;
@@ -91,7 +114,7 @@ namespace Mkb.DapperRepo.Repo
 
         private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
         {
-            connection.Execute(s, new[] { element });
+            connection.Execute(s, new[] {element});
             return Task.CompletedTask;
         };
 
@@ -99,7 +122,7 @@ namespace Mkb.DapperRepo.Repo
         {
             BaseDelete<T>((connection, s) =>
             {
-                connection.Execute(s, new[] { element });
+                connection.Execute(s, new[] {element});
                 return Task.CompletedTask;
             });
         }

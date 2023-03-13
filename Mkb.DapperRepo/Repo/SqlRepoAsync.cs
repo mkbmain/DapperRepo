@@ -48,6 +48,12 @@ namespace Mkb.DapperRepo.Repo
                 (connection.QueryAsync<T>(new CommandDefinition(s, cancellationToken: cancellationToken))));
         }
 
+        public virtual Task<int> Count<T>(CancellationToken cancellationToken = default)
+        {
+            return BaseCount<T, Task<int>>((connection, s) =>
+                (connection.ExecuteScalarAsync<int>(new CommandDefinition(s, cancellationToken: cancellationToken))));
+        }
+
         public virtual Task<IEnumerable<T>> GetExactMatches<T>(T item, bool ignoreNulls,
             CancellationToken cancellationToken = default)
         {
@@ -59,7 +65,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual Task<IEnumerable<T>> Search<T, TIn>(string property, TIn term, SearchType searchType,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return Search(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property,searchType), cancellationToken);
+            return Search(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType), cancellationToken);
         }
 
         public virtual Task<IEnumerable<T>> Search<T>(string property, string term,
@@ -71,21 +77,42 @@ namespace Mkb.DapperRepo.Repo
         public virtual Task<IEnumerable<T>> Search<T>(T item, SearchCriteria searchCriteria,
             CancellationToken cancellationToken = default)
         {
-            return Search(item, new[] { searchCriteria }, cancellationToken);
+            return Search(item, new[] {searchCriteria}, cancellationToken);
         }
 
         public virtual Task<IEnumerable<T>> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria,
             CancellationToken cancellationToken = default)
         {
-            return BaseSearch<T, Task<IEnumerable<T>>>(
+            return BaseSearchEntity<T, Task<IEnumerable<T>>>(
                 (connection, s) =>
                     connection.QueryAsync<T>(new CommandDefinition(s, item, cancellationToken: cancellationToken)),
+                searchCriteria);
+        }
+        
+        public virtual Task<int> SearchCount<T, TIn>(string property, TIn term, SearchType searchType,
+            CancellationToken cancellationToken = default) where T : class, new()
+        {
+            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType), cancellationToken);
+        }
+
+        public virtual Task<int> SearchCount<T>(T item, SearchCriteria searchCriteria,
+            CancellationToken cancellationToken = default)
+        {
+            return SearchCount(item, new[] {searchCriteria}, cancellationToken);
+        }
+        
+        public virtual Task<int> SearchCount<T>(T item, IEnumerable<SearchCriteria> searchCriteria,
+            CancellationToken cancellationToken = default)
+        {
+            return BaseSearchCount<T,Task<int>>(
+                (connection, s) =>
+                    connection.ExecuteScalarAsync<int>(new CommandDefinition(s, item, cancellationToken: cancellationToken)),
                 searchCriteria);
         }
 
         public virtual Task Add<T>(T element, CancellationToken cancellationToken = default)
         {
-            return BaseAdd(new[] { element },
+            return BaseAdd(new[] {element},
                 async (connection, s) =>
                 {
                     await connection.QueryAsync<T>(new CommandDefinition(s, element,
@@ -98,7 +125,7 @@ namespace Mkb.DapperRepo.Repo
         {
             return BaseUpdate(element, ignoreNullProperties,
                 (connection, s) =>
-                    connection.ExecuteAsync(new CommandDefinition(s, new[] { element },
+                    connection.ExecuteAsync(new CommandDefinition(s, new[] {element},
                         cancellationToken: cancellationToken)));
         }
 
@@ -108,13 +135,13 @@ namespace Mkb.DapperRepo.Repo
 
         private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
         {
-            return connection.ExecuteAsync(s, new[] { element });
+            return connection.ExecuteAsync(s, new[] {element});
         };
 
         public virtual Task Delete<T>(T element, CancellationToken cancellationToken = default)
         {
             return BaseDelete<T>((connection, s) =>
-                connection.ExecuteAsync(new CommandDefinition(s, new[] { element },
+                connection.ExecuteAsync(new CommandDefinition(s, new[] {element},
                     cancellationToken: cancellationToken)));
         }
     }
