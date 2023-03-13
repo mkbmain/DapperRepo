@@ -8,9 +8,14 @@ namespace Mkb.DapperRepo.Tests.Entities
         [PrimaryKey]
         [SqlColumnName("Id")]
         public int? BigTest { get; set; }
+
         [SqlColumnName("Name")]
         public string NameTests { get; set; }
+
         [SqlColumnName("SomeNumber")]
         public int? SomeNum { get; set; }
+
+        [SqlIgnoreColumn]
+        public string Blah { get; set; }
     }
 }

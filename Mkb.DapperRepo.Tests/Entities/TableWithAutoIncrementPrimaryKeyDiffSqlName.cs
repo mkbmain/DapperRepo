@@ -8,24 +8,29 @@ namespace Mkb.DapperRepo.Tests.Entities
     {
         public TableWithAutoIncrementPrimaryKeyDiffSqlName()
         {
-            
         }
+
         public TableWithAutoIncrementPrimaryKeyDiffSqlName(TableWithAutoIncrementPrimaryKey item)
         {
             TestId = item.BigTest;
             NameTest = item.NameTests;
             SomeNum = item.SomeNum;
         }
-        
+
         [PrimaryKey]
         [SqlColumnName("Id")]
         public int? TestId { get; set; }
+
         [SqlColumnName("Name")]
         public string NameTest { get; set; }
+
         [SqlColumnName("SomeNumber")]
         public int? SomeNum { get; set; }
+
+        [SqlIgnoreColumn]
+        public string Blah { get; set; }
     }
-    
+
     // This is a copy of TableWithAutIncrementPrimaryKey but with different names and sql name makes them the same for testing
     // this is to test SqlName
 }
