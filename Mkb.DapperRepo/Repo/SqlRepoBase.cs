@@ -12,11 +12,11 @@ namespace Mkb.DapperRepo.Repo
 {
     public abstract class SqlRepoBase
     {
-        private Func<DbConnection> Connection;
+        private readonly Func<DbConnection> _connection;
 
         public SqlRepoBase(Func<DbConnection> connection)
         {
-            Connection = connection;
+            _connection = connection;
         }
 
         protected TOut BaseGet<T, TOut>(Func<DbConnection, string, TOut> func)
@@ -38,7 +38,7 @@ namespace Mkb.DapperRepo.Repo
         protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func, string sql)
         {
             Mappers.TableMapper.Setup<T>();
-            return func.Invoke(Connection(), sql);
+            return func.Invoke(_connection(), sql);
         }
 
         protected Tout BaseGetExactMatches<T, Tout>(T element, Func<DbConnection, string, Tout> func, bool ignoreNulls)
@@ -82,7 +82,7 @@ namespace Mkb.DapperRepo.Repo
             var sql =
                 $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", sqlNames)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
-            return action.Invoke(Connection(), sql);
+            return action.Invoke(_connection(), sql);
         }
 
 
@@ -108,14 +108,14 @@ namespace Mkb.DapperRepo.Repo
         // we need to return here to ensure if its async it completes the task hence we use func not action
         protected Task BaseExecute(string sql, Func<DbConnection, string, Task> func)
         {
-            return func.Invoke(Connection(), sql);
+            return func.Invoke(_connection(), sql);
         }
 
         protected Task BaseDelete<T>(Func<DbConnection, string, Task> func)
         {
             var delete =
                 $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
-            return func.Invoke(Connection(), delete);
+            return func.Invoke(_connection(), delete);
         }
 
         protected static T SetFieldOf<T, PropT>(T item, string property, object valueToSearchBy)
