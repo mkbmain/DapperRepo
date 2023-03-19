@@ -50,27 +50,7 @@ namespace Mkb.DapperRepo.Reflection
 
         public IEnumerable<PropertyInfo> NameLookUp(string name)
         {
-            if (QuickNameLookUp.TryGetValue(name.ToLower(), out var items))
-            {
-                return items;
-            }
-
-            return null;
+            return QuickNameLookUp.TryGetValue(name.ToLower(), out var items) ? items : null;
         }
-    }
-
-    internal class PropertyColName
-    {
-        public PropertyColName(string classPropertyName, string sqlPropertyName, PropertyInfo propertyInfo)
-        {
-            this.PropertyInfo = propertyInfo;
-            this.SqlPropertyName = sqlPropertyName;
-            this.ClassPropertyName = classPropertyName;
-        }
-
-        public string SqlPropertyName { get; }
-        public string ClassPropertyName { get; }
-
-        public PropertyInfo PropertyInfo { get; }
     }
 }

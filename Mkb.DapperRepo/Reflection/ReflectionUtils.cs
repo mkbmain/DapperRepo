@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,8 +13,7 @@ namespace Mkb.DapperRepo.Reflection
 {
     internal static class ReflectionUtils
     {
-        private static Dictionary<Type, EntityPropertyInfo> TypeLookup = new Dictionary<Type, EntityPropertyInfo>();
-        private static object obLock = new object();
+        private static readonly ConcurrentDictionary<Type, EntityPropertyInfo> TypeLookup = new ConcurrentDictionary<Type, EntityPropertyInfo>();
 
         internal static EntityPropertyInfo GetEntityPropertyInfo<T>()
         {
@@ -30,15 +30,14 @@ namespace Mkb.DapperRepo.Reflection
                 f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true)
                     .Any()); // primary key determined by attribute now
             var epv = new EntityPropertyInfo(id, properties);
-            lock (obLock)
-            {
-                if (TypeLookup.ContainsKey(typeof(T)))
-                {
-                    return epv;
-                }
 
-                TypeLookup.Add(typeof(T), epv);
+            if (TypeLookup.ContainsKey(typeof(T)))
+            {
+                return epv;
             }
+
+            TypeLookup.TryAdd(typeof(T), epv);
+
 
             TableMapper.Setup<T>();
             return epv;
