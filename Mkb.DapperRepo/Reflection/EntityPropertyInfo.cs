@@ -11,7 +11,7 @@ namespace Mkb.DapperRepo.Reflection
 {
     internal class EntityPropertyInfo
     {
-        private Dictionary<string, PropertyInfo[]> QuickNameLookUp;
+        private readonly Dictionary<string, PropertyInfo[]> _quickNameLookUp;
         public PropertyInfo Id { get; }
         public PropertyColName IdColNameDetails => ClassPropertyColNamesDetails[Id.Name];
         internal IEnumerable<PropertyInfo> All { get; }
@@ -24,9 +24,10 @@ namespace Mkb.DapperRepo.Reflection
         public EntityPropertyInfo(PropertyInfo id, IEnumerable<PropertyInfo> all)
         {
             Id = id;
-            All = all;
-            QuickNameLookUp = all.GroupBy(e => e.Name.ToLower()).ToDictionary(e => e.Key, e => e.ToArray());
-            var hold = all.Select(e => new
+            var propertyInfos = all as PropertyInfo[] ?? all.ToArray();
+            All = propertyInfos;
+            _quickNameLookUp = propertyInfos.GroupBy(e => e.Name.ToLower()).ToDictionary(e => e.Key, e => e.ToArray());
+            var hold = propertyInfos.Select(e => new
                 {
                     details = e,
                     Attr = (SqlColumnNameAttribute) Attribute.GetCustomAttribute(e, typeof(SqlColumnNameAttribute)),
@@ -50,7 +51,7 @@ namespace Mkb.DapperRepo.Reflection
 
         public IEnumerable<PropertyInfo> NameLookUp(string name)
         {
-            return QuickNameLookUp.TryGetValue(name.ToLower(), out var items) ? items : null;
+            return _quickNameLookUp.TryGetValue(name.ToLower(), out var items) ? items : null;
         }
     }
 }

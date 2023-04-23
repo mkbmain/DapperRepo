@@ -13,7 +13,6 @@ namespace Mkb.DapperRepo.Reflection
 
         public string SqlPropertyName { get; }
         public string ClassPropertyName { get; }
-
         public PropertyInfo PropertyInfo { get; }
     }
 }

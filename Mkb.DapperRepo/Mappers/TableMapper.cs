@@ -7,7 +7,7 @@ namespace Mkb.DapperRepo.Mappers
 {
     internal class TableMapper
     {
-        private static HashSet<Type> MapDone = new HashSet<Type>();
+        private static readonly HashSet<Type> MapDone = new HashSet<Type>();
 
         internal static void Setup<T>()
         {
@@ -34,6 +34,7 @@ namespace Mkb.DapperRepo.Mappers
                         {
                             return prop.PropertyInfo;
                         }
+
                         if (info.ClassPropertyColNamesLowerDetails.TryGetValue(colName.ToLower(), out prop))
                         {
                             return prop.PropertyInfo;
@@ -41,14 +42,11 @@ namespace Mkb.DapperRepo.Mappers
 
                         return null;
                     }));
-            
-            
+
+
             lock (MapDone)
             {
-                if (!MapDone.Contains(typeof(T)))
-                {
-                    MapDone.Add(typeof(T));
-                }
+                MapDone.Add(typeof(T));
             }
         }
     }
