@@ -96,6 +96,7 @@ Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
 
 ## Query single
 ```csharp
+// feel free to use top 1 or limit 1 depending on implementation of the sql provider
 Repo.QuerySingle<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
 ```
