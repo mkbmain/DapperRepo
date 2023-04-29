@@ -41,7 +41,7 @@ namespace Mkb.DapperRepo.Repo
             return func.Invoke(_connection(), sql);
         }
 
-        protected Tout BaseGetExactMatches<T, Tout>(T element, Func<DbConnection, string, Tout> func, bool ignoreNulls)
+        protected TOut BaseGetExactMatches<T, TOut>(T element, Func<DbConnection, string, TOut> func, bool ignoreNulls)
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var wheres = entityPropertyInfo.AllNonId
@@ -52,7 +52,7 @@ namespace Mkb.DapperRepo.Repo
 
             var whereClause = $" where {String.Join(" and ", wheres)}";
 
-            return BaseGetAll<T, Tout>((connection, sql) =>
+            return BaseGetAll<T, TOut>((connection, sql) =>
                 func(connection, $"{sql}{whereClause}"));
         }
 
@@ -118,9 +118,9 @@ namespace Mkb.DapperRepo.Repo
             return func.Invoke(_connection(), delete);
         }
 
-        protected static T SetFieldOf<T, PropT>(T item, string property, object valueToSearchBy)
+        protected static T SetFieldOf<T, TProp>(T item, string property, object valueToSearchBy)
         {
-            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
+            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(TProp), property);
             theField.SetValue(item, valueToSearchBy);
             return item;
         }
