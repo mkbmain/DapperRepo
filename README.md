@@ -99,6 +99,10 @@ Repo.GetAllByX<TableModel, int>(nameof(TableModel.SomeNumber), 35);
 // feel free to use top 1 or limit 1 depending on implementation of the sql provider
 Repo.QuerySingle<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
+         
+// or with param    
+Repo.QuerySingle<TableModel>(
+                "select * from TableModel where SomeNumber = @num",new {num =33});
 ```
 
 
@@ -106,6 +110,10 @@ Repo.QuerySingle<TableModel>(
 ```csharp
 Repo.QueryMany<TableModel>(
                 "select * from TableModel where SomeNumber = 33");
+
+// or with param                
+Repo.QueryMany<TableModel>(
+                "select * from TableModel where SomeNumber = @num",new {num=33});
 ```
 
 ## Get By Id
