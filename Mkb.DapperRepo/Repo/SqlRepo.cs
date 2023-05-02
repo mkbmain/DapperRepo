@@ -24,19 +24,9 @@ namespace Mkb.DapperRepo.Repo
             return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2, param), sql);
         }
 
-        public virtual T QuerySingle<T>(string sql, object param)
-        {
-            return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2, param), sql);
-        }
-
         public virtual IEnumerable<T> QueryMany<T>(string sql)
         {
             return QueryMany<T>(sql, null);
-        }
-
-        public virtual IEnumerable<T> QueryMany<T>(string sql, object param)
-        {
-            return BaseGetAll<T, IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2, param), sql);
         }
 
         public virtual IEnumerable<T> QueryMany<T>(string sql, object param)
