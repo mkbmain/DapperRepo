@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
@@ -17,9 +16,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual Task<T> QuerySingle<T>(string sql, CancellationToken cancellationToken = default)
         {
-            return BaseGetAll<T, Task<T>>((connection, sql2) =>
-                connection.QueryFirstOrDefaultAsync<T>(
-                    new CommandDefinition(sql2, cancellationToken: cancellationToken)), sql);
+            return QuerySingle<T>(sql, null, cancellationToken);
         }
 
         public virtual Task<T> QuerySingle<T>(string sql, object param, CancellationToken cancellationToken = default)
@@ -31,9 +28,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual Task<IEnumerable<T>> QueryMany<T>(string sql, CancellationToken cancellationToken = default)
         {
-            return BaseGetAll<T, Task<IEnumerable<T>>>(
-                (connection, sql2) =>
-                    connection.QueryAsync<T>(new CommandDefinition(sql2, cancellationToken: cancellationToken)), sql);
+            return QueryMany<T>(sql, null, cancellationToken); 
         }
 
         public virtual Task<IEnumerable<T>> QueryMany<T>(string sql, object param,
