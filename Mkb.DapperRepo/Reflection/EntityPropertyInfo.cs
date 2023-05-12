@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Mkb.DapperRepo.Attributes;
-using Mkb.DapperRepo.Exceptions;
-
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
 
 namespace Mkb.DapperRepo.Reflection
@@ -25,10 +23,6 @@ namespace Mkb.DapperRepo.Reflection
         public EntityPropertyInfo(PropertyInfo id, IEnumerable<PropertyInfo> all,string nameOfClass)
         {
             Id = id;
-            if (Id is null)
-            {
-                throw new PrimaryKeyNotFoundException($"Primary key not found on table: {nameOfClass}");
-            }
             var propertyInfos = all as PropertyInfo[] ?? all.ToArray();
             All = propertyInfos;
             _quickNameLookUp = propertyInfos.GroupBy(e => e.Name.ToLower()).ToDictionary(e => e.Key, e => e.ToArray());
