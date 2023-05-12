@@ -128,7 +128,7 @@ namespace Mkb.DapperRepo.Repo
 
         private static string PrimaryKeyWhereClause<T>(EntityPropertyInfo entityPropertyInfo)
         {
-            if (entityPropertyInfo.Id is null) throw new PrimaryKeyNotFoundException($"Primary key not found on table:{typeof(T).Name}");
+            if (entityPropertyInfo.Id is null) throw new PrimaryKeyNotFoundException($"Primary key not found on table:{GetTableNameFromType(typeof(T))}");
             return $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
         }
 
