@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Mkb.DapperRepo.Attributes;
-
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
 
 namespace Mkb.DapperRepo.Reflection

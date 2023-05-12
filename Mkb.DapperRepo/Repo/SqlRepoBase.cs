@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
 using Mkb.DapperRepo.Search;
 
@@ -22,7 +23,7 @@ namespace Mkb.DapperRepo.Repo
         protected TOut BaseGet<T, TOut>(Func<DbConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
-                func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
+                func(connection, $"{s} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
 
         protected TOut BaseCount<T, TOut>(Func<DbConnection, string, TOut> func)
@@ -94,7 +95,7 @@ namespace Mkb.DapperRepo.Repo
                 .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
             var sql =
-                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
+                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause<T>(entityPropertyInfo)}";
 
             return BaseExecute<T>(sql, func);
         }
@@ -114,7 +115,7 @@ namespace Mkb.DapperRepo.Repo
         protected Task BaseDelete<T>(Func<DbConnection, string, Task> func)
         {
             var delete =
-                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
+                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(_connection(), delete);
         }
 
@@ -125,8 +126,11 @@ namespace Mkb.DapperRepo.Repo
             return item;
         }
 
-        private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
-            $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
+        private static string PrimaryKeyWhereClause<T>(EntityPropertyInfo entityPropertyInfo)
+        {
+            if (entityPropertyInfo.Id is null) throw new PrimaryKeyNotFoundException($"Primary key not found on table:{GetTableNameFromType(typeof(T))}");
+            return $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
+        }
 
         private static string GetTableNameFromType(MemberInfo type)
         {
