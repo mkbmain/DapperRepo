@@ -9,6 +9,7 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
     {
         private class ReflectionTest
         {
+            [PrimaryKey]
             public string Name { get; set; }
         }
 
