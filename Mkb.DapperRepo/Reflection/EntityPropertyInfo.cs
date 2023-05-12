@@ -20,7 +20,7 @@ namespace Mkb.DapperRepo.Reflection
         public Dictionary<string, PropertyColName> ClassPropertyColNamesLowerDetails { get; }
         public Dictionary<string, PropertyColName> SqlPropertyColNamesDetails { get; }
 
-        public EntityPropertyInfo(PropertyInfo id, IEnumerable<PropertyInfo> all,string nameOfClass)
+        public EntityPropertyInfo(PropertyInfo id, IEnumerable<PropertyInfo> all)
         {
             Id = id;
             var propertyInfos = all as PropertyInfo[] ?? all.ToArray();

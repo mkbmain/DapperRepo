@@ -29,7 +29,7 @@ namespace Mkb.DapperRepo.Reflection
             var id = properties.FirstOrDefault(f =>
                 f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true)
                     .Any()); // primary key determined by attribute now
-            var epv = new EntityPropertyInfo(id, properties, typeof(T).Name);
+            var epv = new EntityPropertyInfo(id, properties);
 
             if (TypeLookup.ContainsKey(typeof(T)))
             {
