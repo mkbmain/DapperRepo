@@ -222,7 +222,11 @@ Special Thanks to armanx
 
 
 ## Notes:
+### V2.3.0
+Brings with it a new exception PrimaryKeyNotFoundException. 
+You should get this when trying to do updates or deletes entities that are missing a primary key attributes. 
 
+This should not be breaking as currently it will throw a null ref exception which is not very descriptive
 ### SqlColumnName: 
 Uses simple reflection on the class looking for both class property names and sql col names (set via attribute) and sets up mapping to both.
 Check query tests for more details. 
