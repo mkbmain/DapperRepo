@@ -13,12 +13,12 @@ designed to generate simple crud operations while still being lite weight
 | PostgreSQL | NpgsqlConnection | Npgsql                |
 | Sqlite     | SqliteConnection | Microsoft.Data.Sqlite |
 
-It may work for others. 
+It may work for others.
 
 (sql lite I recently added, I made no changes to the repo just added test setup to confirm it worked).
 
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
-The repo its self has no scope over any provider (nor should it). 
+The repo its self has no scope over any provider (nor should it).
 
 
 # Setup
@@ -48,7 +48,7 @@ or of course via DI
   services.AddScoped(r => new SqlRepoAsync(()=>r.GetService<SqlConnection>));
   
 ```
-by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data. 
+by taking a DbConnection directly it does support multiple providers. Allowing a abstract way to interact with data.
 Regardless of the db tech.
 
 
@@ -147,7 +147,7 @@ Repo.Delete(item);
 ```
 
 ## Update
- update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
+update command is using only primary key in the where clause. so strictly speaking if you wish to update all the values on a row and know its primary key a get is not required
 ```csharp
 
  var item = Repo.GetById(new TableModel {Id = Guid.Parse("....")});
@@ -164,7 +164,7 @@ Repo.Delete(item);
 ```
 
 ## Search And Search Count
-Search will bring you back the entities and search count will give you the number of records. 
+Search will bring you back the entities and search count will give you the number of records.
 
 Count Is more light weight if you just need a any equivalent.
 ```csharp
@@ -222,10 +222,14 @@ Special Thanks to armanx
 
 
 ## Notes:
+### V2.3.0
+Brings with it a new exception PrimaryKeyNotFoundException.
+You should get this when trying to do updates or deletes entities that are missing a primary key attributes.
 
-### SqlColumnName: 
+This should not be breaking as currently it will throw a null ref exception which is not very descriptive
+### SqlColumnName:
 Uses simple reflection on the class looking for both class property names and sql col names (set via attribute) and sets up mapping to both.
-Check query tests for more details. 
+Check query tests for more details.
 
-Please note as most sql servers implementations are not case sensitive nor is the mapper. 
+Please note as most sql servers implementations are not case sensitive nor is the mapper.
 Meaning having 2 fields named the same thing with different casing in the same class this may result in undesirable results.
