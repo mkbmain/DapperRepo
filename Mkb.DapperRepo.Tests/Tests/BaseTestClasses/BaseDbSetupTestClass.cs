@@ -9,22 +9,24 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
     {
         public BaseDbSetupTestClass()
         {
-            ClassName = this.GetType().Name;
+            _className = this.GetType().Name;
         }
 
-        private static string RandomChars => Guid.NewGuid().ToString("N").Substring(0, 6);
-        protected string DbName;
-        protected string ClassName;
+        private static string RandomChars => Guid.NewGuid().ToString("N")[..8];
+        private string _dbName;
+        private readonly string _className;
 
-        protected string Connection => DapperRepo.Tests.Connection.MasterConnectionString.Replace("master", DbName);
+        protected string GetDbName => _dbName;
+
+        protected string Connection => DapperRepo.Tests.Connection.MasterConnectionString.Replace("master", _dbName);
 
         [SetUp]
         public void Setup()
         {
-            DbName = (ClassName + RandomChars).ToLower();
+            _dbName = (_className + RandomChars).ToLower();
             var scriptLocation = PathBuilder.BuildSqlScriptLocation($"CreateDbWithTestTable.{DapperRepo.Tests.Connection.SelectedEnvironment.ToString()}");
             
-            var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", DbName);
+            var sql = File.ReadAllText(scriptLocation).Replace("PlaceHolderDbName", _dbName);
             bool first = true;
 
             foreach (var item in sql.Split("{WaitBlock}"))
@@ -38,7 +40,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
         [TearDown]
         public void TearDown()
         {
-            DataBaseScriptRunnerAndBuilder.KillDb( DapperRepo.Tests.Connection.MasterConnectionString, DbName);
+            DataBaseScriptRunnerAndBuilder.KillDb(DapperRepo.Tests.Connection.MasterConnectionString, _dbName);
         }
     }
 }
