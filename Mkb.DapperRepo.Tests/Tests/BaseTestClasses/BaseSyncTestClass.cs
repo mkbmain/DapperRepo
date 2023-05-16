@@ -5,6 +5,6 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
 {
     public abstract class BaseSyncTestClass : BaseDbSetupTestClass
     {
-        protected SqlRepo Sut => new SqlRepo(()=> DataBaseScriptRunnerAndBuilder.GetConnection(Connection));
+        protected SqlRepo Sut => new (()=> DataBaseScriptRunnerAndBuilder.GetConnection(Connection));
     }
 }
