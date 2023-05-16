@@ -1,5 +1,6 @@
 using System.Linq;
 using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
 using Mkb.DapperRepo.Tests.Entities;
 using NUnit.Framework;
@@ -57,8 +58,10 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
 
         private class Example
         {
-            [SqlColumnName(ColName)]
-            public string ColNameChange { get; set; }
+          [SqlColumnName(ColName)] 
+          public string ColNameChange { get; set; }
         }
+
+        
     }
 }

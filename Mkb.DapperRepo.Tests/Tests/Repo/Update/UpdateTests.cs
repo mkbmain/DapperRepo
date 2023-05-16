@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Tests.Entities;
 using Mkb.DapperRepo.Tests.Tests.BaseTestClasses;
 using Mkb.DapperRepo.Tests.Utils;
@@ -9,6 +10,16 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Update
 {
     public class UpdateTests : BaseSyncTestClass
     {
+        [Test]
+        public void Ensure_we_cant_update_if_class_missing_priamarKey()
+        {
+            var exception =
+                Assert.Throws<PrimaryKeyNotFoundException>( () =>
+                     Sut.Update(new SqlTableNoPrimaryKeyAttribute()));
+            Assert.AreEqual($"Primary key not found on table:{nameof(SqlTableNoPrimaryKeyAttribute)}",
+                exception.Message);
+        }
+        
         [Test]
         public void Ensure_we_can_update_a_record()
         {

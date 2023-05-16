@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
 using Mkb.DapperRepo.Search;
 
@@ -22,7 +23,7 @@ namespace Mkb.DapperRepo.Repo
         protected TOut BaseGet<T, TOut>(Func<DbConnection, string, TOut> func)
         {
             return BaseGetAll<T, TOut>((connection, s) =>
-                func(connection, $"{s} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
+                func(connection, $"{s} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
         }
 
         protected TOut BaseCount<T, TOut>(Func<DbConnection, string, TOut> func)
@@ -41,7 +42,7 @@ namespace Mkb.DapperRepo.Repo
             return func.Invoke(_connection(), sql);
         }
 
-        protected Tout BaseGetExactMatches<T, Tout>(T element, Func<DbConnection, string, Tout> func, bool ignoreNulls)
+        protected TOut BaseGetExactMatches<T, TOut>(T element, Func<DbConnection, string, TOut> func, bool ignoreNulls)
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var wheres = entityPropertyInfo.AllNonId
@@ -52,7 +53,7 @@ namespace Mkb.DapperRepo.Repo
 
             var whereClause = $" where {String.Join(" and ", wheres)}";
 
-            return BaseGetAll<T, Tout>((connection, sql) =>
+            return BaseGetAll<T, TOut>((connection, sql) =>
                 func(connection, $"{sql}{whereClause}"));
         }
 
@@ -94,7 +95,7 @@ namespace Mkb.DapperRepo.Repo
                 .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
             var sql =
-                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause(entityPropertyInfo)}";
+                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause<T>(entityPropertyInfo)}";
 
             return BaseExecute<T>(sql, func);
         }
@@ -114,19 +115,22 @@ namespace Mkb.DapperRepo.Repo
         protected Task BaseDelete<T>(Func<DbConnection, string, Task> func)
         {
             var delete =
-                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause(ReflectionUtils.GetEntityPropertyInfo<T>())}";
+                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}";
             return func.Invoke(_connection(), delete);
         }
 
-        protected static T SetFieldOf<T, PropT>(T item, string property, object valueToSearchBy)
+        protected static T SetFieldOf<T, TProp>(T item, string property, object valueToSearchBy)
         {
-            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(PropT), property);
+            var theField = ReflectionUtils.GetPropertyInfoOfType<T>(typeof(TProp), property);
             theField.SetValue(item, valueToSearchBy);
             return item;
         }
 
-        private static string PrimaryKeyWhereClause(EntityPropertyInfo entityPropertyInfo) =>
-            $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
+        private static string PrimaryKeyWhereClause<T>(EntityPropertyInfo entityPropertyInfo)
+        {
+            if (entityPropertyInfo.Id is null) throw new PrimaryKeyNotFoundException($"Primary key not found on table:{GetTableNameFromType(typeof(T))}");
+            return $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
+        }
 
         private static string GetTableNameFromType(MemberInfo type)
         {

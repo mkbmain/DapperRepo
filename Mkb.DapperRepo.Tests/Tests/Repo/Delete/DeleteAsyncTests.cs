@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Tests.Entities;
 using Mkb.DapperRepo.Tests.Tests.BaseTestClasses;
 using Mkb.DapperRepo.Tests.Utils;
@@ -10,6 +11,16 @@ namespace Mkb.DapperRepo.Tests.Tests.Repo.Delete
 {
     public class DeleteAsyncTest : BaseAsyncTestClass
     {
+        [Test]
+        public void Ensure_we_cant_update_if_class_missing_priamarKey()
+        {
+            var exception =
+                Assert.ThrowsAsync<PrimaryKeyNotFoundException>(async () =>
+                    await Sut.Delete(new SqlTableNoPrimaryKeyAttribute()));
+            Assert.AreEqual($"Primary key not found on table:{nameof(SqlTableNoPrimaryKeyAttribute)}",
+                exception.Message);
+        }
+        
         [Test]
         public async Task Ensure_we_can_Delete_a_record()
         {

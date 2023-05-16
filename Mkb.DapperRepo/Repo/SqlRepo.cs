@@ -16,12 +16,22 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual T QuerySingle<T>(string sql)
         {
-            return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2), sql);
+            return QuerySingle<T>(sql, null);
+        }
+
+        public virtual T QuerySingle<T>(string sql, object param)
+        {
+            return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2, param), sql);
         }
 
         public virtual IEnumerable<T> QueryMany<T>(string sql)
         {
-            return BaseGetAll<T, IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2), sql);
+            return QueryMany<T>(sql, null);
+        }
+
+        public virtual IEnumerable<T> QueryMany<T>(string sql, object param)
+        {
+            return BaseGetAll<T, IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2, param), sql);
         }
 
         public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, object term) where T : class, new()
@@ -64,7 +74,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual IEnumerable<T> Search<T>(T item, SearchCriteria searchCriteria)
         {
-            return Search(item, new[] {searchCriteria});
+            return Search(item, new[] { searchCriteria });
         }
 
         public virtual IEnumerable<T> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
@@ -74,12 +84,13 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual int SearchCount<T, TIn>(string property, TIn term, SearchType searchType) where T : class, new()
         {
-            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType));
+            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term),
+                SearchCriteria.Create(property, searchType));
         }
 
         public virtual int SearchCount<T>(T item, SearchCriteria searchCriteria)
         {
-            return SearchCount(item, new[] {searchCriteria});
+            return SearchCount(item, new[] { searchCriteria });
         }
 
         public virtual int SearchCount<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
@@ -92,7 +103,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual void Add<T>(T element)
         {
-            BaseAdd(new[] {element}, (connection, s) =>
+            BaseAdd(new[] { element }, (connection, s) =>
             {
                 connection.Query<T>(s, element);
                 return Task.CompletedTask;
@@ -114,7 +125,7 @@ namespace Mkb.DapperRepo.Repo
 
         private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
         {
-            connection.Execute(s, new[] {element});
+            connection.Execute(s, new[] { element });
             return Task.CompletedTask;
         };
 
@@ -122,7 +133,7 @@ namespace Mkb.DapperRepo.Repo
         {
             BaseDelete<T>((connection, s) =>
             {
-                connection.Execute(s, new[] {element});
+                connection.Execute(s, new[] { element });
                 return Task.CompletedTask;
             });
         }
