@@ -84,8 +84,7 @@ namespace Mkb.DapperRepo.Tests.Utils
         {
             using var conn = GetConnection(connection);
             conn.Open();
-            var items = conn.Query<T>($"select * from {typeof(T).Name}");
-            return items;
+            return conn.Query<T>($"select * from {typeof(T).Name}");
         }
     }
 }
