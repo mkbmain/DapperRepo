@@ -66,7 +66,7 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static DbConnection GetConnection(string connection)
         {
-            switch (DapperRepo.Tests.Connection.SelectedEnvironment)
+            switch (Connection.SelectedEnvironment)
             {
                 case Enviroment.MySql:
                     return new MySqlConnection(connection);
