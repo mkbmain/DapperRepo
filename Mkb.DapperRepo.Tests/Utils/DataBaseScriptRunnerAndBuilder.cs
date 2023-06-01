@@ -40,20 +40,20 @@ namespace Mkb.DapperRepo.Tests.Utils
                 return;
             }
 
-            string start = Connection.SelectedEnvironment == Enviroment.Sql
-                ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
-                : "";
-            if (Connection.SelectedEnvironment != Enviroment.PostgreSQL)
+            if (Connection.SelectedEnvironment == Enviroment.PostgreSQL)
             {
-                ExecuteCommandNonQuery(connectionToMaster, $"{start}{Environment.NewLine}DROP DATABASE {dbName}");
+                ExecuteCommandNonQuery(connectionToMaster, $"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
+                ExecuteCommandNonQuery(connectionToMaster, @$"SELECT pg_terminate_backend(pg_stat_activity.pid)
+            FROM pg_stat_activity
+            WHERE pg_stat_activity.datname = '{dbName}';");
+                ExecuteCommandNonQuery(connectionToMaster, $"DROP DATABASE {dbName};");
                 return;
             }
 
-            ExecuteCommandNonQuery(connectionToMaster, $"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
-            ExecuteCommandNonQuery(connectionToMaster, @$"SELECT pg_terminate_backend(pg_stat_activity.pid)
-            FROM pg_stat_activity
-            WHERE pg_stat_activity.datname = '{dbName}';");
-            ExecuteCommandNonQuery(connectionToMaster, $"DROP DATABASE {dbName};");
+            var start = Connection.SelectedEnvironment == Enviroment.Sql
+                ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
+                : "";
+            ExecuteCommandNonQuery(connectionToMaster, $"{start}{Environment.NewLine}DROP DATABASE {dbName}");
         }
 
         public static void ExecuteCommandNonQuery(string connection, string sql)
