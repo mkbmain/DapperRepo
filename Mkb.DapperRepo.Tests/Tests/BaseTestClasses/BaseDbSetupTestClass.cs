@@ -16,8 +16,6 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
         private string _dbName;
         private readonly string _className;
 
-        protected string GetDbName => _dbName;
-
         protected string Connection => DapperRepo.Tests.Connection.MasterConnectionString.Replace("master", _dbName);
 
         [SetUp]

@@ -1,4 +1,3 @@
-using System;
 using Mkb.DapperRepo.Attributes;
 
 namespace Mkb.DapperRepo.Tests.Entities

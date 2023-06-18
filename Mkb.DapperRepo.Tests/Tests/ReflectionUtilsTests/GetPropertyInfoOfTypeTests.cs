@@ -1,5 +1,4 @@
 using System;
-using Mkb.DapperRepo.Attributes;
 using Mkb.DapperRepo.Reflection;
 using NUnit.Framework;
 

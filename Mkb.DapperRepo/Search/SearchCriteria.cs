@@ -1,5 +1,3 @@
-using System;
-
 namespace Mkb.DapperRepo.Search
 {
     public class SearchCriteria

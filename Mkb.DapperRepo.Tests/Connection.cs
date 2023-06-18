@@ -7,7 +7,7 @@ namespace Mkb.DapperRepo.Tests
         public static Enviroment SelectedEnvironment = Enviroment.MySql;
 #elif POSTGRES
           public const string MasterConnectionString = "User ID=postgres;Password=A1234567a;Host=localhost;Port=5432;Database=master;"; // Postgres
-                public static Enviroment SelectedEnvironment = Enviroment.PostgreSQL;
+          public static Enviroment SelectedEnvironment = Enviroment.PostgreSQL;
 #elif SQLSERVER
         public const string MasterConnectionString = "Server=localhost;Database=master;User Id=sa;Password=A1234567a;"; // SQL
         public static Enviroment SelectedEnvironment = Enviroment.Sql;

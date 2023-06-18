@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mkb.DapperRepo.Tests.Entities;
 using Mkb.DapperRepo.Tests.Tests.BaseTestClasses;
-using Mkb.DapperRepo.Tests.Tests.Repo.QueryMany;
 using Mkb.DapperRepo.Tests.Utils;
 using NUnit.Framework;
 

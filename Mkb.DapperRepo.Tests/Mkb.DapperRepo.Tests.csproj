@@ -2,11 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-
         <IsPackable>false</IsPackable>
-
         <Configurations>Debug;Release;Postgres;MySql;Sqlite;SqlServer</Configurations>
-
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

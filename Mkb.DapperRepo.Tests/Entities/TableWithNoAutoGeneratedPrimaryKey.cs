@@ -1,5 +1,3 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using Mkb.DapperRepo.Attributes;
 
 namespace Mkb.DapperRepo.Tests.Entities

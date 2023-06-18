@@ -6,6 +6,5 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
     public abstract class BaseAsyncTestClass : BaseDbSetupTestClass
     {
         protected SqlRepoAsync Sut => new(()=> DataBaseScriptRunnerAndBuilder.GetConnection(Connection));
-
     }
 }
