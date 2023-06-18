@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Mkb.DapperRepo.Attributes;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Mappers;
 
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
@@ -49,12 +50,12 @@ namespace Mkb.DapperRepo.Reflection
             if (theField == null && throwIfNotFound)
             {
                 var match = fields.NameLookUp(property);
-                if (match != null && match.Any())
-                {
-                    throw new Exception($"Type Must Be {type.Name}");
-                }
 
-                throw new Exception($"Property:{property} not found in Type:{typeof(T).Name}");
+                if (match != null && match.Any())
+                    throw new TypeMissMatchException($"Type Must Be {type.Name}");
+
+
+                throw new PropertyNotFoundException($"Property:{property} not found in Type:{typeof(T).Name}");
             }
 
             return theField;

@@ -1,4 +1,5 @@
 using System;
+using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
 using NUnit.Framework;
 
@@ -23,7 +24,7 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
         [Test]
         public void Ensure_we_throw_if_property_not_found()
         {
-            var exp = Assert.Throws<Exception>(
+            var exp = Assert.Throws<PropertyNotFoundException>(
                 () => ReflectionUtils.GetPropertyInfoOfType<ReflectionTest>(typeof(string),
                     nameof(ReflectionTest.Name) + "tes")
             );
@@ -35,7 +36,7 @@ namespace Mkb.DapperRepo.Tests.Tests.ReflectionUtilsTests
         [Test]
         public void Ensure_we_throw_if_property_not_type_we_specified()
         {
-            var exp = Assert.Throws<Exception>(
+            var exp = Assert.Throws<TypeMissMatchException>(
                 () => ReflectionUtils.GetPropertyInfoOfType<ReflectionTest>(typeof(int),
                     nameof(ReflectionTest.Name))
             );

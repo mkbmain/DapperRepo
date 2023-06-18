@@ -7,7 +7,7 @@ namespace Mkb.DapperRepo.Mappers
 {
     internal class TableMapper
     {
-        private static readonly HashSet<Type> MapDone = new HashSet<Type>();
+        private static readonly HashSet<Type> MapDone = new();
 
         internal static void Setup<T>()
         {
@@ -28,14 +28,10 @@ namespace Mkb.DapperRepo.Mappers
 
             SqlMapper.SetTypeMap(typeof(T),
                 new CustomPropertyTypeMap(typeof(T),
-                    (type, colName) =>
+                    (_, colName) =>
                     {
-                        if (info.SqlPropertyColNamesDetails.TryGetValue(colName.ToLower(), out var prop))
-                        {
-                            return prop.PropertyInfo;
-                        }
-
-                        if (info.ClassPropertyColNamesLowerDetails.TryGetValue(colName.ToLower(), out prop))
+                        if (info.SqlPropertyColNamesDetails.TryGetValue(colName.ToLower(), out var prop) || 
+                            info.ClassPropertyColNamesLowerDetails.TryGetValue(colName.ToLower(), out prop))
                         {
                             return prop.PropertyInfo;
                         }

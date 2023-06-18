@@ -36,7 +36,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, object term) where T : class, new()
         {
             return Search(SetFieldOf<T, PropT>(new T(), property, term),
-                SearchCriteria.Create(property, SearchType.Equals));
+                new SearchCriteria(property, SearchType.Equals));
         }
 
         public virtual T GetById<T>(T element)
@@ -63,7 +63,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual IEnumerable<T> Search<T, TIn>(string property, TIn term, SearchType searchType)
             where T : class, new()
         {
-            return Search<T>(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType));
+            return Search<T>(SetFieldOf<T, TIn>(new T(), property, term), new SearchCriteria(property, searchType));
         }
 
         public virtual IEnumerable<T> Search<T>(string property, string term) where T : class, new()
@@ -84,7 +84,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual int SearchCount<T, TIn>(string property, TIn term, SearchType searchType) where T : class, new()
         {
             return SearchCount(SetFieldOf<T, TIn>(new T(), property, term),
-                SearchCriteria.Create(property, searchType));
+                new SearchCriteria(property, searchType));
         }
 
         public virtual int SearchCount<T>(T item, SearchCriteria searchCriteria)

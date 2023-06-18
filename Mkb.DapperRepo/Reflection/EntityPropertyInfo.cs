@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Mkb.DapperRepo.Attributes;
+
 [assembly: InternalsVisibleTo("Mkb.DapperRepo.Tests")]
 
 namespace Mkb.DapperRepo.Reflection
@@ -29,15 +30,15 @@ namespace Mkb.DapperRepo.Reflection
             var hold = propertyInfos.Select(e => new
                 {
                     details = e,
-                    Attr = (SqlColumnNameAttribute) Attribute.GetCustomAttribute(e, typeof(SqlColumnNameAttribute)),
+                    Attr = (SqlColumnNameAttribute)Attribute.GetCustomAttribute(e, typeof(SqlColumnNameAttribute)),
                 })
                 .Select(r =>
                     new PropertyColName(r.details.Name, r.Attr == null ? r.details.Name : r.Attr.Name, r.details))
                 .ToArray();
-            
+
             ClassPropertyColNamesDetails = hold.GroupBy(e => e.ClassPropertyName)
                 .ToDictionary(e => e.Key, e => e.First());
-            
+
             SqlPropertyColNamesDetails = hold.GroupBy(e => e.SqlPropertyName.ToLower())
                 .ToDictionary(e => e.Key, e => e.First());
 
@@ -48,9 +49,6 @@ namespace Mkb.DapperRepo.Reflection
         public PropertyInfo NameLookUp(string name, Type type) =>
             NameLookUp(name)?.FirstOrDefault(e => e.PropertyType == type);
 
-        public IEnumerable<PropertyInfo> NameLookUp(string name)
-        {
-            return _quickNameLookUp.TryGetValue(name.ToLower(), out var items) ? items : null;
-        }
+        public IEnumerable<PropertyInfo> NameLookUp(string name) => _quickNameLookUp.TryGetValue(name.ToLower(), out var items) ? items : null;
     }
 }

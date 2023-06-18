@@ -44,7 +44,7 @@ namespace Mkb.DapperRepo.Repo
             CancellationToken cancellationToken = default) where T : class, new()
         {
             return Search<T>(SetFieldOf<T, PropT>(new T(), property, term),
-                SearchCriteria.Create(property, SearchType.Equals), cancellationToken);
+                new SearchCriteria(property, SearchType.Equals), cancellationToken);
         }
 
         public virtual Task<T> GetById<T>(T element, CancellationToken cancellationToken = default)
@@ -77,7 +77,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual Task<IEnumerable<T>> Search<T, TIn>(string property, TIn term, SearchType searchType,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return Search(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType),
+            return Search(SetFieldOf<T, TIn>(new T(), property, term), new SearchCriteria(property, searchType),
                 cancellationToken);
         }
 
@@ -105,7 +105,7 @@ namespace Mkb.DapperRepo.Repo
         public virtual Task<int> SearchCount<T, TIn>(string property, TIn term, SearchType searchType,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term), SearchCriteria.Create(property, searchType),
+            return SearchCount(SetFieldOf<T, TIn>(new T(), property, term), new SearchCriteria(property, searchType),
                 cancellationToken);
         }
 
