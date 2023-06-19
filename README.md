@@ -197,7 +197,7 @@ Repo.Search<TableModel, int>(
             });
             
            // this will allow you to search where name like "%hae%" 
-           // and SomeNumber less than equal to 9
+           // and SomeNumber equal to 9
             
 ```
 
