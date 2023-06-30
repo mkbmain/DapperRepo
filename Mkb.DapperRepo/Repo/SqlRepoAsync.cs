@@ -28,7 +28,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual Task<IEnumerable<T>> QueryMany<T>(string sql, CancellationToken cancellationToken = default)
         {
-            return QueryMany<T>(sql, null, cancellationToken); 
+            return QueryMany<T>(sql, null, cancellationToken);
         }
 
         public virtual Task<IEnumerable<T>> QueryMany<T>(string sql, object param,
@@ -40,10 +40,10 @@ namespace Mkb.DapperRepo.Repo
                 sql);
         }
 
-        public virtual Task<IEnumerable<T>> GetAllByX<T, PropT>(string property, object term,
+        public virtual Task<IEnumerable<T>> GetAllByX<T, TPropT>(string property, object term,
             CancellationToken cancellationToken = default) where T : class, new()
         {
-            return Search<T>(SetFieldOf<T, PropT>(new T(), property, term),
+            return Search(SetFieldOf<T, TPropT>(new T(), property, term),
                 new SearchCriteria(property, SearchType.Equals), cancellationToken);
         }
 
@@ -148,10 +148,7 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual Task Execute<T>(T element, string sql) => BaseExecute<T>(sql, ExecuteFunc(element));
 
-        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
-        {
-            return connection.ExecuteAsync(s, new[] { element });
-        };
+        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) => { return connection.ExecuteAsync(s, new[] { element }); };
 
         public virtual Task Delete<T>(T element, CancellationToken cancellationToken = default)
         {
