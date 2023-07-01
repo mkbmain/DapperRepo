@@ -13,7 +13,7 @@ namespace Mkb.DapperRepo.Reflection
 {
     internal static class ReflectionUtils
     {
-        private static readonly ConcurrentDictionary<Type, EntityPropertyInfo> TypeLookup = new ConcurrentDictionary<Type, EntityPropertyInfo>();
+        private static readonly ConcurrentDictionary<Type, EntityPropertyInfo> TypeLookup = new();
 
         internal static EntityPropertyInfo GetEntityPropertyInfo<T>()
         {
@@ -29,18 +29,11 @@ namespace Mkb.DapperRepo.Reflection
             var id = properties.FirstOrDefault(f =>
                 f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true)
                     .Any()); // primary key determined by attribute now
-            var epv = new EntityPropertyInfo(id, properties);
-
-            if (TypeLookup.ContainsKey(typeof(T)))
-            {
-                return epv;
-            }
-
-            TypeLookup.TryAdd(typeof(T), epv);
-
+            
+            TypeLookup.TryAdd(typeof(T), new EntityPropertyInfo(id, properties));
 
             TableMapper.Setup<T>();
-            return epv;
+            return TypeLookup[typeof(T)];
         }
 
         internal static PropertyInfo GetPropertyInfoOfType<T>(Type type, string property, bool throwIfNotFound = true)

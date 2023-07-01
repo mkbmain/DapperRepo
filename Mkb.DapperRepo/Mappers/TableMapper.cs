@@ -16,28 +16,11 @@ namespace Mkb.DapperRepo.Mappers
                 return;
             }
 
-            SetMap<T>(ReflectionUtils.GetEntityPropertyInfo<T>());
-        }
-
-        private static void SetMap<T>(EntityPropertyInfo info)
-        {
-            if (MapDone.Contains(typeof(T)))
-            {
-                return;
-            }
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
 
             SqlMapper.SetTypeMap(typeof(T),
                 new CustomPropertyTypeMap(typeof(T),
-                    (_, colName) =>
-                    {
-                        if (info.SqlPropertyColNamesDetails.TryGetValue(colName.ToLower(), out var prop) || 
-                            info.ClassPropertyColNamesLowerDetails.TryGetValue(colName.ToLower(), out prop))
-                        {
-                            return prop.PropertyInfo;
-                        }
-
-                        return null;
-                    }));
+                    (_, colName) => info.SqlPropertyColNamesDetails.TryGetValue(colName.ToLower(), out var prop) ? prop.PropertyInfo : null));
 
 
             lock (MapDone)

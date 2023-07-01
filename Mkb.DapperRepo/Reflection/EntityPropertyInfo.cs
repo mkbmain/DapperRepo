@@ -18,7 +18,7 @@ namespace Mkb.DapperRepo.Reflection
         public IEnumerable<PropertyInfo> AllNonId => All.Where(f => f != Id);
 
         public Dictionary<string, PropertyColName> ClassPropertyColNamesDetails { get; }
-        public Dictionary<string, PropertyColName> ClassPropertyColNamesLowerDetails { get; }
+
         public Dictionary<string, PropertyColName> SqlPropertyColNamesDetails { get; }
 
         public EntityPropertyInfo(PropertyInfo id, IEnumerable<PropertyInfo> all)
@@ -40,9 +40,6 @@ namespace Mkb.DapperRepo.Reflection
                 .ToDictionary(e => e.Key, e => e.First());
 
             SqlPropertyColNamesDetails = hold.GroupBy(e => e.SqlPropertyName.ToLower())
-                .ToDictionary(e => e.Key, e => e.First());
-
-            ClassPropertyColNamesLowerDetails = hold.GroupBy(e => e.ClassPropertyName.ToLower())
                 .ToDictionary(e => e.Key, e => e.First());
         }
 

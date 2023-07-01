@@ -23,9 +23,8 @@ namespace Mkb.DapperRepo.Search
                 case SearchType.GreaterThanEqualTo:
                     return ">=";
                 case SearchType.LessThanEqualTo:
-                    return "<=";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    return "<=";
             }
         }
     }
