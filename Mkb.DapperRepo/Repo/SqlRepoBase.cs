@@ -8,7 +8,7 @@ using Mkb.DapperRepo.Attributes;
 using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
 using Mkb.DapperRepo.Search;
-
+ 
 namespace Mkb.DapperRepo.Repo
 {
     public abstract class SqlRepoBase
