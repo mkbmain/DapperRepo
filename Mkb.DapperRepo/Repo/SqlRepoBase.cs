@@ -12,7 +12,7 @@ using Mkb.DapperRepo.Search;
 namespace Mkb.DapperRepo.Repo
 {
     public abstract class SqlRepoBase
-    {
+    { 
         private readonly Func<DbConnection> _connection;
 
         public SqlRepoBase(Func<DbConnection> connection)
