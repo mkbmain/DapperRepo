@@ -224,7 +224,7 @@ Special Thanks to armanx
 ## Notes:
 ### V2.3.0
 Brings with it a new exception PrimaryKeyNotFoundException.
-You should get this when trying to do updates or deletes entities that are missing a primary key attributes.
+You should get this when trying to do a updates or a delete on entities that are missing a primary key attributes.
 
 This should not be breaking as currently it will throw a null ref exception which is not very descriptive
 ### SqlColumnName:
@@ -232,4 +232,4 @@ Uses simple reflection on the class looking for both class property names and sq
 Check query tests for more details.
 
 Please note as most sql servers implementations are not case sensitive nor is the mapper.
-Meaning having 2 fields named the same thing with different casing in the same class this may result in undesirable results.
+Meaning having 2 fields named the same thing with different casing in the same class this may result in undesirable behaviour.
