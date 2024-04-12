@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
         <Title>Mkb.DapperRepo</Title>
         <Authors>Mkb</Authors>
         <Description>Basic repo for dapper works with MySql,Sqlite,Postgres, Microsoft Sql .. + others. Readme contains uses. details on https://github.com/mkbmain/DapperRepo </Description>
@@ -9,9 +8,10 @@
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
-        <PackageVersion>2.3.1</PackageVersion>
+        <PackageVersion>2.3.2</PackageVersion>
         <Configurations>Debug;Release;Postgres;MySql;Sqlite;SqlServer</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
 <PropertyGroup>
