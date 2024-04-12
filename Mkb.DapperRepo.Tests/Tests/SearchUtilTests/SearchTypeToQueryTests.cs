@@ -1,44 +1,44 @@
 using Mkb.DapperRepo.Search;
-using NUnit.Framework;
+using Xunit;
 
 namespace Mkb.DapperRepo.Tests.Tests.SearchUtilTests
 {
     public class SearchTypeToQueryTests
     {
-        [Test]
+        [Fact]
         public void Ensure_GreaterThan()
         {
-            Assert.AreEqual(">", SearchCriteriaHelper.SearchTypeToQuery(SearchType.GreaterThan));
+            Assert.Equal(">", SearchCriteriaHelper.SearchTypeToQuery(SearchType.GreaterThan));
         }
         
-        [Test]
+        [Fact]
         public void Ensure_GreaterThanEqualTo()
         {
-            Assert.AreEqual(">=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.GreaterThanEqualTo));
+            Assert.Equal(">=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.GreaterThanEqualTo));
         }
         
-        [Test]
+        [Fact]
         public void Ensure_Equals()
         {
-            Assert.AreEqual("=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.Equals));
+            Assert.Equal("=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.Equals));
         }
         
-        [Test]
+        [Fact]
         public void Ensure_LessThan()
         {
-            Assert.AreEqual("<", SearchCriteriaHelper.SearchTypeToQuery(SearchType.LessThan));
+            Assert.Equal("<", SearchCriteriaHelper.SearchTypeToQuery(SearchType.LessThan));
         }
         
-        [Test]
+        [Fact]
         public void Ensure_LessThanEqualTo()
         {
-            Assert.AreEqual("<=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.LessThanEqualTo));
+            Assert.Equal("<=", SearchCriteriaHelper.SearchTypeToQuery(SearchType.LessThanEqualTo));
         }
 
-        [Test]
+        [Fact]
         public void Ensure_Like()
         {
-            Assert.AreEqual("like", SearchCriteriaHelper.SearchTypeToQuery(SearchType.Like));
+            Assert.Equal("like", SearchCriteriaHelper.SearchTypeToQuery(SearchType.Like));
         }
     }
 }

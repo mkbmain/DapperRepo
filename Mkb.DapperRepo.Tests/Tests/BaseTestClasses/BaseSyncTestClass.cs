@@ -1,5 +1,6 @@
 using Mkb.DapperRepo.Repo;
 using Mkb.DapperRepo.Tests.Utils;
+using Xunit;
 
 namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
 {
