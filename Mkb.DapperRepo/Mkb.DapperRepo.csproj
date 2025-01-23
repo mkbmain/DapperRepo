@@ -8,7 +8,7 @@
         <PackageProjectUrl>https://github.com/mkbmain/DapperRepo</PackageProjectUrl>
         <RepositoryUrl>https://github.com/mkbmain/DapperRepo</RepositoryUrl>
         <PackageId>Mkb.DapperRepo</PackageId>
-        <PackageVersion>2.3.2</PackageVersion>
+        <PackageVersion>2.4.0</PackageVersion>
         <Configurations>Debug;Release;Postgres;MySql;Sqlite;SqlServer</Configurations>
         <Platforms>AnyCPU</Platforms>
         <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
