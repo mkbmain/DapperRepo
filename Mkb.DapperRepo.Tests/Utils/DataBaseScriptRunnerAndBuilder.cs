@@ -32,15 +32,15 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
-            if (Connection.SelectedEnvironment == Enviroment.Sqlite)
+            if (Connection.SelectedEnvironment == Environment.Sqlite)
             {
                 // this does not appear to work but rebuild solves it so meh
-                var path = System.IO.Path.Combine(Environment.CurrentDirectory, dbName);
+                var path = System.IO.Path.Combine(System.Environment.CurrentDirectory, dbName);
                 System.IO.File.Delete(path);
                 return;
             }
 
-            if (Connection.SelectedEnvironment == Enviroment.PostgreSQL)
+            if (Connection.SelectedEnvironment == Environment.PostgreSQL)
             {
                 ExecuteCommandNonQuery(connectionToMaster, $"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
                 ExecuteCommandNonQuery(connectionToMaster, @$"SELECT pg_terminate_backend(pg_stat_activity.pid)
@@ -50,10 +50,10 @@ namespace Mkb.DapperRepo.Tests.Utils
                 return;
             }
 
-            var start = Connection.SelectedEnvironment == Enviroment.Sql
+            var start = Connection.SelectedEnvironment == Environment.Sql
                 ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
                 : "";
-            ExecuteCommandNonQuery(connectionToMaster, $"{start}{Environment.NewLine}DROP DATABASE {dbName}");
+            ExecuteCommandNonQuery(connectionToMaster, $"{start}{System.Environment.NewLine}DROP DATABASE {dbName}");
         }
 
         public static void ExecuteCommandNonQuery(string connection, string sql)
@@ -68,13 +68,13 @@ namespace Mkb.DapperRepo.Tests.Utils
         {
             switch (Connection.SelectedEnvironment)
             {
-                case Enviroment.MySql:
+                case Environment.MySql:
                     return new MySqlConnection(connection);
-                case Enviroment.PostgreSQL:
+                case Environment.PostgreSQL:
                     return new NpgsqlConnection(connection);
-                case Enviroment.Sqlite:
+                case Environment.Sqlite:
                     return new SqliteConnection(connection);
-                case Enviroment.Sql:
+                case Environment.Sql:
                 default:
                     return new SqlConnection(connection);
             }

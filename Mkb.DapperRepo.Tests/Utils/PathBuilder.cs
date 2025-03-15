@@ -5,6 +5,6 @@ namespace Mkb.DapperRepo.Tests.Utils
 {
     public class PathBuilder
     {
-        public static string BuildSqlScriptLocation(string scriptName) => Path.Join(Path.Join(Environment.CurrentDirectory, "SqlScripts"), scriptName);
+        public static string BuildSqlScriptLocation(string scriptName) => Path.Join(Path.Join(System.Environment.CurrentDirectory, "SqlScripts"), scriptName);
     }
 }

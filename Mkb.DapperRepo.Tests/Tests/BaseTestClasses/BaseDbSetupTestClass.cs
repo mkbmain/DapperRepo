@@ -8,7 +8,7 @@ namespace Mkb.DapperRepo.Tests.Tests.BaseTestClasses
     public abstract class BaseDbSetupTestClass : IDisposable
     {
         private static string RandomChars => Guid.NewGuid().ToString("N")[..8];
-        private string _dbName;
+        private readonly string _dbName;
         private readonly string _className;
 
         protected string Connection => DapperRepo.Tests.Connection.MasterConnectionString.Replace("master", _dbName);
