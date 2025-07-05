@@ -32,28 +32,31 @@ namespace Mkb.DapperRepo.Tests.Utils
 
         public static void KillDb(string connectionToMaster, string dbName)
         {
-            if (Connection.SelectedEnvironment == Environment.Sqlite)
+            switch (Connection.SelectedEnvironment)
             {
-                // this does not appear to work but rebuild solves it so meh
-                var path = System.IO.Path.Combine(System.Environment.CurrentDirectory, dbName);
-                System.IO.File.Delete(path);
-                return;
-            }
-
-            if (Connection.SelectedEnvironment == Environment.PostgreSQL)
-            {
-                ExecuteCommandNonQuery(connectionToMaster, $"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
-                ExecuteCommandNonQuery(connectionToMaster, @$"SELECT pg_terminate_backend(pg_stat_activity.pid)
+                case Environment.Sqlite:
+                {
+                    // this does not appear to work but rebuild solves it so meh
+                    var path = System.IO.Path.Combine(System.Environment.CurrentDirectory, dbName);
+                    System.IO.File.Delete(path);
+                    return;
+                }
+                case Environment.PostgreSQL:
+                    ExecuteCommandNonQuery(connectionToMaster, $"REVOKE CONNECT ON DATABASE {dbName} FROM public;");
+                    ExecuteCommandNonQuery(connectionToMaster, @$"SELECT pg_terminate_backend(pg_stat_activity.pid)
             FROM pg_stat_activity
             WHERE pg_stat_activity.datname = '{dbName}';");
-                ExecuteCommandNonQuery(connectionToMaster, $"DROP DATABASE {dbName};");
-                return;
+                    ExecuteCommandNonQuery(connectionToMaster, $"DROP DATABASE {dbName};");
+                    return;
+                default:
+                {
+                    var start = Connection.SelectedEnvironment == Environment.Sql
+                        ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
+                        : "";
+                    ExecuteCommandNonQuery(connectionToMaster, $"{start}{System.Environment.NewLine}DROP DATABASE {dbName}");
+                    break;
+                }
             }
-
-            var start = Connection.SelectedEnvironment == Environment.Sql
-                ? $"ALTER DATABASE [{dbName}] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE"
-                : "";
-            ExecuteCommandNonQuery(connectionToMaster, $"{start}{System.Environment.NewLine}DROP DATABASE {dbName}");
         }
 
         public static void ExecuteCommandNonQuery(string connection, string sql)
