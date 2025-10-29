@@ -20,6 +20,9 @@ It may work for others.
 Please note due to wanting to support multiple Db providers certain choices have been made that are for compatibility over optimisation.
 The repo its self has no scope over any provider (nor should it).
 
+# Releases
+Nuget:
+https://www.nuget.org/packages/Mkb.DapperRepo
 
 # Setup
 
