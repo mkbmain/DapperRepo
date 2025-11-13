@@ -12,6 +12,10 @@
         <Configurations>Debug;Release;Postgres;MySql;Sqlite;SqlServer</Configurations>
         <Platforms>AnyCPU</Platforms>
         <TargetFrameworks>net8.0;netstandard2.0;net10.0</TargetFrameworks>
+        <IncludeSymbols>true</IncludeSymbols>
+        <IncludeSource>true</IncludeSource>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
 <PropertyGroup>

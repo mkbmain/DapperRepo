@@ -227,6 +227,7 @@ Special Thanks to armanx
 ## Notes:
 ### V2.5.10
 Only upgrade over V2.5 is net 10 support.
+Also nuget now includes symbols and source
 ### V2.3.0
 Brings with it a new exception PrimaryKeyNotFoundException.
 You should get this when trying to do a updates or a delete on entities that are missing a primary key attributes.
