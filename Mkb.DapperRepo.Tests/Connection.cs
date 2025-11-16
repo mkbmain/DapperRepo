@@ -9,7 +9,7 @@ namespace Mkb.DapperRepo.Tests
           public const string MasterConnectionString = "User ID=postgres;Password=A1234567a;Host=localhost;Port=5432;Database=master;"; // Postgres
           public const Environment SelectedEnvironment = Environment.PostgreSQL;
 #elif SQLSERVER
-        public const string MasterConnectionString = "Server=localhost;Database=master;User Id=sa;Password=A1234567a;"; // SQL
+        public const string MasterConnectionString = "Server=localhost;Database=master;User Id=sa;Password=A1234567a;TrustServerCertificate=true"; // SQL
         public const Environment SelectedEnvironment = Environment.Sql;
 #else
         public const string MasterConnectionString = "Data Source=master.sqlite"; // Sqlite

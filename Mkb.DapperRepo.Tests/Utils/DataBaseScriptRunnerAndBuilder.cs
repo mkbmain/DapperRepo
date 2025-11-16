@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Mkb.DapperRepo.Tests.Entities;
 using MySql.Data.MySqlClient;
