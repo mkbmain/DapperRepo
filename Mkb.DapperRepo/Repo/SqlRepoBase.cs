@@ -46,12 +46,12 @@ namespace Mkb.DapperRepo.Repo
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var wheres = entityPropertyInfo.AllNonId
-                .Where(r => !ignoreNulls || (typeof(T).GetProperty(r.Name)?.GetValue(element, null) != null))
+                .Where(r => !ignoreNulls || r.GetValue(element) != null)
                 .Select(f =>
-                    $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(typeof(T).GetProperty(f.Name)?.GetValue(element, null) == null ? "IS NULL" : $"= @{f.Name}")}")
+                    $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(f.GetValue(element) == null ? "IS NULL" : $"= @{f.Name}")}")
                 .ToArray();
 
-            var whereClause = $" where {String.Join(" and ", wheres)}";
+            var whereClause = $" where {string.Join(" and ", wheres)}";
 
             return BaseGetAll<T, TOut>((connection, sql) =>
                 func(connection, $"{sql}{whereClause}"));
@@ -72,8 +72,9 @@ namespace Mkb.DapperRepo.Repo
         protected Task BaseAdd<T>(IEnumerable<T> elements, Func<DbConnection, string, Task> action)
         {
             var propertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var elementArray = elements as T[] ?? elements.ToArray();
             var properties = propertyInfo.All
-                .Where(f => elements.Any(e => typeof(T).GetProperty(f.Name)?.GetValue(e, null) != null))
+                .Where(f => elementArray.Any(e => f.GetValue(e) != null))
                 .Select(f => f.Name)
                 .ToArray();
 
@@ -91,7 +92,7 @@ namespace Mkb.DapperRepo.Repo
         {
             var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
             var updates = entityPropertyInfo.AllNonId
-                .Where(f => !ignoreNullProperties || typeof(T).GetProperty(f.Name)?.GetValue(element, null) != null)
+                .Where(f => !ignoreNullProperties || f.GetValue(element) != null)
                 .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
             var sql =

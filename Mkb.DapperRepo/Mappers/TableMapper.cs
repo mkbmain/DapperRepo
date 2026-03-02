@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Dapper;
 using Mkb.DapperRepo.Reflection;
 
@@ -7,25 +7,18 @@ namespace Mkb.DapperRepo.Mappers
 {
     internal class TableMapper
     {
-        private static readonly HashSet<Type> MapDone = new HashSet<Type>();
+        private static readonly ConcurrentDictionary<Type, bool> MapDone = new ConcurrentDictionary<Type, bool>();
 
         internal static void Setup<T>()
         {
-            if (MapDone.Contains(typeof(T)))
-            {
-                return;
-            }
-
+            if (MapDone.ContainsKey(typeof(T))) return;
             SetMap<T>(ReflectionUtils.GetEntityPropertyInfo<T>());
         }
 
-        private static void SetMap<T>(EntityPropertyInfo info)
+        internal static void SetMap<T>(EntityPropertyInfo info)
         {
-            if (MapDone.Contains(typeof(T)))
-            {
-                return;
-            }
-
+            if (MapDone.ContainsKey(typeof(T))) return;
+            if (!MapDone.TryAdd(typeof(T), true)) return;
             SqlMapper.SetTypeMap(typeof(T),
                 new CustomPropertyTypeMap(typeof(T),
                     (type, colName) =>
@@ -42,12 +35,6 @@ namespace Mkb.DapperRepo.Mappers
 
                         return null;
                     }));
-
-
-            lock (MapDone)
-            {
-                MapDone.Add(typeof(T));
-            }
         }
     }
 }

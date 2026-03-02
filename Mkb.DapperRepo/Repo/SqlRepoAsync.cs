@@ -144,14 +144,16 @@ namespace Mkb.DapperRepo.Repo
                         cancellationToken: cancellationToken)));
         }
 
-        public virtual Task Execute(string sql) => BaseExecute(sql, (connection, s) => connection.ExecuteAsync(s));
+        public virtual Task Execute(string sql, CancellationToken cancellationToken = default) =>
+            BaseExecute(sql, (connection, s) =>
+                connection.ExecuteAsync(new CommandDefinition(s, cancellationToken: cancellationToken)));
 
-        public virtual Task Execute<T>(T element, string sql) => BaseExecute<T>(sql, ExecuteFunc(element));
+        public virtual Task Execute<T>(T element, string sql, CancellationToken cancellationToken = default) =>
+            BaseExecute<T>(sql, ExecuteFunc(element, cancellationToken));
 
-        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
-        {
-            return connection.ExecuteAsync(s, new[] { element });
-        };
+        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element, CancellationToken cancellationToken) =>
+            (connection, s) =>
+                connection.ExecuteAsync(new CommandDefinition(s, new[] { element }, cancellationToken: cancellationToken));
 
         public virtual Task Delete<T>(T element, CancellationToken cancellationToken = default)
         {

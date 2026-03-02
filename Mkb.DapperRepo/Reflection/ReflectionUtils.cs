@@ -16,30 +16,17 @@ namespace Mkb.DapperRepo.Reflection
 
         internal static EntityPropertyInfo GetEntityPropertyInfo<T>()
         {
-            if (TypeLookup.TryGetValue(typeof(T), out var item))
+            return TypeLookup.GetOrAdd(typeof(T), _ =>
             {
-                return item;
-            }
-
-            var properties = typeof(T).GetProperties()
-                .Where(w => !w.GetCustomAttributes(typeof(SqlIgnoreColumnAttribute), true).Any())
-                .ToArray();
-
-            var id = properties.FirstOrDefault(f =>
-                f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true)
-                    .Any()); // primary key determined by attribute now
-            var epv = new EntityPropertyInfo(id, properties);
-
-            if (TypeLookup.ContainsKey(typeof(T)))
-            {
+                var properties = typeof(T).GetProperties()
+                    .Where(w => !w.GetCustomAttributes(typeof(SqlIgnoreColumnAttribute), true).Any())
+                    .ToArray();
+                var id = properties.FirstOrDefault(f =>
+                    f.GetCustomAttributes(typeof(PrimaryKeyAttribute), true).Any());
+                var epv = new EntityPropertyInfo(id, properties);
+                TableMapper.SetMap<T>(epv);
                 return epv;
-            }
-
-            TypeLookup.TryAdd(typeof(T), epv);
-
-
-            TableMapper.Setup<T>();
-            return epv;
+            });
         }
 
         internal static PropertyInfo GetPropertyInfoOfType<T>(Type type, string property, bool throwIfNotFound = true)
