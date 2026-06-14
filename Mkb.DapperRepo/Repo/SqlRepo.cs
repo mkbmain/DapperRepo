@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading.Tasks;
 using Dapper;
+using Mkb.DapperRepo.Mappers;
 using Mkb.DapperRepo.Search;
+using System.Linq;
 
 namespace Mkb.DapperRepo.Repo
 {
@@ -13,27 +14,25 @@ namespace Mkb.DapperRepo.Repo
         {
         }
 
-        public virtual T QuerySingle<T>(string sql)
-        {
-            return QuerySingle<T>(sql, null);
-        }
+        public virtual T QuerySingle<T>(string sql) => QuerySingle<T>(sql, null);
 
         public virtual T QuerySingle<T>(string sql, object param)
         {
-            return BaseGetAll<T, T>((connection, sql2) => connection.QueryFirstOrDefault<T>(sql2, param), sql);
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.QueryFirstOrDefault<T>(sql, param);
         }
 
-        public virtual IEnumerable<T> QueryMany<T>(string sql)
-        {
-            return QueryMany<T>(sql, null);
-        }
+        public virtual IEnumerable<T> QueryMany<T>(string sql) => QueryMany<T>(sql, null);
 
         public virtual IEnumerable<T> QueryMany<T>(string sql, object param)
         {
-            return BaseGetAll<T, IEnumerable<T>>((connection, sql2) => connection.Query<T>(sql2, param), sql);
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.Query<T>(sql, param);
         }
 
-        public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, object term) where T : class, new()
+        public virtual IEnumerable<T> GetAllByX<T, PropT>(string property, PropT term) where T : class, new()
         {
             return Search(SetFieldOf<T, PropT>(new T(), property, term),
                 SearchCriteria.Create(property, SearchType.Equals));
@@ -41,23 +40,30 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual T GetById<T>(T element)
         {
-            return BaseGet<T, T>((connection, s) => connection.QueryFirstOrDefault<T>(s, element));
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.QueryFirstOrDefault<T>(GetByIdSql<T>(), element);
         }
 
         public virtual IEnumerable<T> GetAll<T>()
         {
-            return BaseGetAll<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s));
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.Query<T>(SelectAllSql<T>());
         }
 
         public virtual int Count<T>()
         {
-            return BaseCount<T, int>((connection, s) => (connection.ExecuteScalar<int>(new CommandDefinition(s))));
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.ExecuteScalar<int>(new CommandDefinition(CountSql<T>()));
         }
 
         public virtual IEnumerable<T> GetExactMatches<T>(T item, bool ignoreNulls)
         {
-            return BaseGetExactMatches(item, (connection2, s2) =>
-                connection2.Query<T>(s2, item), ignoreNulls);
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.Query<T>(ExactMatchesSql<T>(item, ignoreNulls), item);
         }
 
         public virtual IEnumerable<T> Search<T, TIn>(string property, TIn term, SearchType searchType)
@@ -78,10 +84,13 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual IEnumerable<T> Search<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
         {
-            return BaseSearchEntity<T, IEnumerable<T>>((connection, s) => connection.Query<T>(s, item), searchCriteria);
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.Query<T>(SearchSql<T>(searchCriteria), item);
         }
 
-        public virtual int SearchCount<T, TIn>(string property, TIn term, SearchType searchType) where T : class, new()
+        public virtual int SearchCount<T, TIn>(string property, TIn term, SearchType searchType)
+            where T : class, new()
         {
             return SearchCount(SetFieldOf<T, TIn>(new T(), property, term),
                 SearchCriteria.Create(property, searchType));
@@ -94,47 +103,58 @@ namespace Mkb.DapperRepo.Repo
 
         public virtual int SearchCount<T>(T item, IEnumerable<SearchCriteria> searchCriteria)
         {
-            return BaseSearchCount<T, int>(
-                (connection, s) =>
-                    connection.ExecuteScalar<int>(new CommandDefinition(s, item)),
-                searchCriteria);
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                return connection.ExecuteScalar<int>(new CommandDefinition(SearchCountSql<T>(searchCriteria), item));
+        }
+
+        public virtual IEnumerable<T> Search<T>(IEnumerable<SearchTerm<T>> terms)
+        {
+            TableMapper.Setup<T>();
+            var (sql, dp) = SearchTermsSql(terms.ToArray());
+            using (var connection = CreateConnection())
+                return connection.Query<T>(sql, dp);
+        }
+
+        public virtual int SearchCount<T>(IEnumerable<SearchTerm<T>> terms)
+        {
+            TableMapper.Setup<T>();
+            var (sql, dp) = SearchCountTermsSql(terms.ToArray());
+            using (var connection = CreateConnection())
+                return connection.ExecuteScalar<int>(new CommandDefinition(sql, dp));
         }
 
         public virtual void Add<T>(T element)
         {
-            BaseAdd(new[] { element }, (connection, s) =>
-            {
-                connection.Query<T>(s, element);
-                return Task.CompletedTask;
-            });
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                connection.Execute(BuildInsertSql(new[] { element }), element);
         }
 
         public virtual void Update<T>(T element, bool ignoreNullProperties = false)
         {
-            BaseUpdate(element, ignoreNullProperties, ExecuteFunc(element));
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                connection.Execute(BuildUpdateSql(element, ignoreNullProperties), new[] { element });
         }
 
-        public virtual void Execute(string sql) => BaseExecute(sql, (connection, s) =>
+        public virtual void Execute(string sql)
         {
-            connection.Execute(s);
-            return Task.CompletedTask;
-        });
+            using (var connection = CreateConnection())
+                connection.Execute(sql);
+        }
 
-        public virtual void Execute<T>(T element, string sql) => BaseExecute<T>(sql, ExecuteFunc(element));
-
-        private static Func<DbConnection, string, Task> ExecuteFunc<T>(T element) => (connection, s) =>
+        public virtual void Execute<T>(T element, string sql)
         {
-            connection.Execute(s, new[] { element });
-            return Task.CompletedTask;
-        };
+            TableMapper.Setup<T>();
+            using (var connection = CreateConnection())
+                connection.Execute(sql, new[] { element });
+        }
 
         public virtual void Delete<T>(T element)
         {
-            BaseDelete<T>((connection, s) =>
-            {
-                connection.Execute(s, new[] { element });
-                return Task.CompletedTask;
-            });
+            using (var connection = CreateConnection())
+                connection.Execute(DeleteSql<T>(), new[] { element });
         }
     }
 }

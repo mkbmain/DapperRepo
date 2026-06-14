@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Dapper;
 using Mkb.DapperRepo.Attributes;
 using Mkb.DapperRepo.Exceptions;
 using Mkb.DapperRepo.Reflection;
@@ -13,111 +13,106 @@ namespace Mkb.DapperRepo.Repo
 {
     public abstract class SqlRepoBase
     {
-        private readonly Func<DbConnection> _connection;
+        private readonly Func<DbConnection> _connectionFactory;
 
-        public SqlRepoBase(Func<DbConnection> connection)
+        protected SqlRepoBase(Func<DbConnection> connectionFactory)
         {
-            _connection = connection;
+            _connectionFactory = connectionFactory;
         }
 
-        protected TOut BaseGet<T, TOut>(Func<DbConnection, string, TOut> func)
+        protected DbConnection CreateConnection() => _connectionFactory();
+
+        protected static string SelectAllSql<T>() =>
+            $"select * from {TableName(typeof(T))}";
+
+        protected static string CountSql<T>() =>
+            $"select COUNT(*) from {TableName(typeof(T))}";
+
+        protected static string GetByIdSql<T>()
         {
-            return BaseGetAll<T, TOut>((connection, s) =>
-                func(connection, $"{s} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}"));
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
+            return $"{SelectAllSql<T>()} {PrimaryKeyWhereClause<T>(info)}";
         }
 
-        protected TOut BaseCount<T, TOut>(Func<DbConnection, string, TOut> func)
+        protected static string DeleteSql<T>()
         {
-            return BaseGetAll<T, TOut>(func, $"select COUNT(*) from {GetTableNameFromType(typeof(T))}");
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
+            return $"delete from {TableName(typeof(T))} {PrimaryKeyWhereClause<T>(info)}";
         }
 
-        protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func)
-        {
-            return BaseGetAll<T, TOut>(func, $"select * from {GetTableNameFromType(typeof(T))}");
-        }
-
-        protected TOut BaseGetAll<T, TOut>(Func<DbConnection, string, TOut> func, string sql)
-        {
-            Mappers.TableMapper.Setup<T>();
-            return func.Invoke(_connection(), sql);
-        }
-
-        protected TOut BaseGetExactMatches<T, TOut>(T element, Func<DbConnection, string, TOut> func, bool ignoreNulls)
-        {
-            var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
-            var wheres = entityPropertyInfo.AllNonId
-                .Where(r => !ignoreNulls || r.GetValue(element) != null)
-                .Select(f =>
-                    $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(f.GetValue(element) == null ? "IS NULL" : $"= @{f.Name}")}")
-                .ToArray();
-
-            var whereClause = $" where {string.Join(" and ", wheres)}";
-
-            return BaseGetAll<T, TOut>((connection, sql) =>
-                func(connection, $"{sql}{whereClause}"));
-        }
-
-        protected TOut BaseSearchEntity<T, TOut>(Func<DbConnection, string, TOut> func,
-            IEnumerable<SearchCriteria> searchCriteria)
-        {
-            return BaseGetAll<T, TOut>((connection, sql2) => func(connection, BuildWhereString<T>(sql2,searchCriteria)));
-        }
-
-        protected TOut BaseSearchCount<T, TOut>(Func<DbConnection, string, TOut> func,
-            IEnumerable<SearchCriteria> searchCriteria)
-        {
-            return BaseCount<T, TOut>((connection, sql2) => func(connection, BuildWhereString<T>(sql2,searchCriteria)));
-        }
-
-        protected Task BaseAdd<T>(IEnumerable<T> elements, Func<DbConnection, string, Task> action)
+        protected static string BuildInsertSql<T>(T[] elements)
         {
             var propertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
-            var elementArray = elements as T[] ?? elements.ToArray();
             var properties = propertyInfo.All
-                .Where(f => elementArray.Any(e => f.GetValue(e) != null))
+                .Where(f => elements.Any(e => f.GetValue(e) != null))
                 .Select(f => f.Name)
                 .ToArray();
 
-            var sqlNames = propertyInfo.ClassPropertyColNamesDetails.Select(e => e.Value)
+            var sqlNames = propertyInfo.ClassPropertyColNamesDetails
+                .Select(e => e.Value)
                 .Where(e => properties.Contains(e.ClassPropertyName))
                 .Select(e => e.SqlPropertyName);
-            var sql =
-                $"insert into {GetTableNameFromType(typeof(T))} ({string.Join(",", sqlNames)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
 
-            return action.Invoke(_connection(), sql);
+            return $"insert into {TableName(typeof(T))} ({string.Join(",", sqlNames)}) values ({string.Join(",", properties.Select(t => $"@{t}"))})";
         }
 
-
-        protected Task BaseUpdate<T>(T element, bool ignoreNullProperties, Func<DbConnection, string, Task> func)
+        protected static string BuildUpdateSql<T>(T element, bool ignoreNullProperties)
         {
-            var entityPropertyInfo = ReflectionUtils.GetEntityPropertyInfo<T>();
-            var updates = entityPropertyInfo.AllNonId
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var updates = info.AllNonId
                 .Where(f => !ignoreNullProperties || f.GetValue(element) != null)
-                .Select(f => $"{entityPropertyInfo.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
+                .Select(f => $"{info.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} = @{f.Name}");
 
-            var sql =
-                $"update {GetTableNameFromType(typeof(T))} set  {string.Join(",", updates)} {PrimaryKeyWhereClause<T>(entityPropertyInfo)}";
-
-            return BaseExecute<T>(sql, func);
+            return $"update {TableName(typeof(T))} set {string.Join(",", updates)} {PrimaryKeyWhereClause<T>(info)}";
         }
 
-        protected Task BaseExecute<T>(string sql, Func<DbConnection, string, Task> func)
+        protected static string ExactMatchesSql<T>(T element, bool ignoreNulls)
         {
-            ReflectionUtils.GetEntityPropertyInfo<T>();
-            return BaseExecute(sql, func);
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var wheres = info.AllNonId
+                .Where(r => !ignoreNulls || r.GetValue(element) != null)
+                .Select(f =>
+                    $"{info.ClassPropertyColNamesDetails[f.Name].SqlPropertyName} {(f.GetValue(element) == null ? "IS NULL" : $"= @{f.Name}")}")
+                .ToArray();
+
+            return $"{SelectAllSql<T>()} where {string.Join(" and ", wheres)}";
         }
 
-        // we need to return here to ensure if its async it completes the task hence we use func not action
-        protected Task BaseExecute(string sql, Func<DbConnection, string, Task> func)
-        {
-            return func.Invoke(_connection(), sql);
-        }
+        protected static string SearchSql<T>(IEnumerable<SearchCriteria> searchCriteria) =>
+            $"{SelectAllSql<T>()} where {SearchWhereClause<T>(searchCriteria)}";
 
-        protected Task BaseDelete<T>(Func<DbConnection, string, Task> func)
+        protected static string SearchCountSql<T>(IEnumerable<SearchCriteria> searchCriteria) =>
+            $"{CountSql<T>()} where {SearchWhereClause<T>(searchCriteria)}";
+
+        protected static (string sql, DynamicParameters parameters) SearchTermsSql<T>(SearchTerm<T>[] terms) =>
+            BuildSearchTermsQuery(SelectAllSql<T>(), terms);
+
+        protected static (string sql, DynamicParameters parameters) SearchCountTermsSql<T>(SearchTerm<T>[] terms) =>
+            BuildSearchTermsQuery(CountSql<T>(), terms);
+
+        private static (string sql, DynamicParameters parameters) BuildSearchTermsQuery<T>(string baseSql, SearchTerm<T>[] terms)
         {
-            var delete =
-                $"delete from {GetTableNameFromType(typeof(T))} {PrimaryKeyWhereClause<T>(ReflectionUtils.GetEntityPropertyInfo<T>())}";
-            return func.Invoke(_connection(), delete);
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var dp = new DynamicParameters();
+            var whereParts = new string[terms.Length];
+
+            for (var i = 0; i < terms.Length; i++)
+            {
+                var term = terms[i];
+                var colName = info.ClassPropertyColNamesDetails[term.PropertyName].SqlPropertyName;
+                if (term.SearchType == SearchType.IsNull)
+                {
+                    whereParts[i] = $"{colName} is null";
+                }
+                else
+                {
+                    var paramName = $"p{i}";
+                    dp.Add(paramName, term.Value);
+                    whereParts[i] = $"{colName} {SearchCriteriaHelper.SearchTypeToQuery(term.SearchType)} @{paramName}";
+                }
+            }
+
+            return ($"{baseSql} where {string.Join(" And ", whereParts)}", dp);
         }
 
         protected static T SetFieldOf<T, TProp>(T item, string property, object valueToSearchBy)
@@ -127,27 +122,25 @@ namespace Mkb.DapperRepo.Repo
             return item;
         }
 
-        private static string PrimaryKeyWhereClause<T>(EntityPropertyInfo entityPropertyInfo)
+        private static string PrimaryKeyWhereClause<T>(EntityPropertyInfo info)
         {
-            if (entityPropertyInfo.Id is null) throw new PrimaryKeyNotFoundException($"Primary key not found on table:{GetTableNameFromType(typeof(T))}");
-            return $"where {entityPropertyInfo.IdColNameDetails.SqlPropertyName} = @{entityPropertyInfo.Id.Name}";
+            if (info.Id is null)
+                throw new PrimaryKeyNotFoundException($"Primary key not found on table:{TableName(typeof(T))}");
+            return $"where {info.IdColNameDetails.SqlPropertyName} = @{info.Id.Name}";
         }
 
-        private static string GetTableNameFromType(MemberInfo type)
+        private static string TableName(MemberInfo type)
         {
             var attribute = type.GetCustomAttribute(typeof(SqlTableNameAttribute), false);
-            return attribute != null ? ((SqlTableNameAttribute) attribute).Name : type.Name;
+            return attribute != null ? ((SqlTableNameAttribute)attribute).Name : type.Name;
         }
-        
-        private static string BuildWhereString<T>(string sql, IEnumerable<SearchCriteria> searchCriteria) =>
-            $"{sql} where {SearchBuilder<T>(searchCriteria)}";
 
-        private static string SearchBuilder<T>(IEnumerable<SearchCriteria> searchCriteria)
+        private static string SearchWhereClause<T>(IEnumerable<SearchCriteria> searchCriteria)
         {
-            var reflectionType = ReflectionUtils.GetEntityPropertyInfo<T>();
+            var info = ReflectionUtils.GetEntityPropertyInfo<T>();
             return string.Join(" And ",
                 searchCriteria.Select(e =>
-                    $"{reflectionType.ClassPropertyColNamesDetails[e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {(e.SearchType == SearchType.IsNull ? "" : $"@{e.PropertyName}")}"));
+                    $"{info.ClassPropertyColNamesDetails[e.PropertyName].SqlPropertyName} {SearchCriteriaHelper.SearchTypeToQuery(e.SearchType)}  {(e.SearchType == SearchType.IsNull ? "" : $"@{e.PropertyName}")}"));
         }
     }
 }
